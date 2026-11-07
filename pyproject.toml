@@ -1,0 +1,96 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nicefigs"
+dynamic = ["version"]
+description = "Publication-grade, modular matplotlib plotting for geoscience."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Vitus Benson", email = "vitus.benson@icloud.com" }]
+keywords = [
+    "matplotlib", "visualization", "geoscience", "earth-science", "cartography",
+    "publication", "maps", "colormaps", "figures",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Framework :: Matplotlib",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Typing :: Typed",
+]
+dependencies = [
+    "matplotlib>=3.7",
+    "numpy>=1.23",
+    "pillow>=9.0",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+maps = [
+    "cartopy>=0.22",
+    "shapely>=2.0",
+]
+xarray = [
+    "xarray>=2023.1",
+]
+all = [
+    "nicefigs[maps,xarray]",
+]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.24",
+]
+dev = [
+    "nicefigs[maps,xarray]",
+    "pytest>=7.0",
+    "pre-commit>=3.5",
+    "build>=1.0",
+    "twine>=5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/EarthyScience/nicefigs"
+Documentation = "https://earthyscience.github.io/nicefigs"
+Repository = "https://github.com/EarthyScience/nicefigs"
+Issues = "https://github.com/EarthyScience/nicefigs/issues"
+Changelog = "https://github.com/EarthyScience/nicefigs/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/nicefigs/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nicefigs"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src/nicefigs",
+    "/tests",
+    "/README.md",
+    "/CHANGELOG.md",
+    "/LICENSE",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+ignore = ["E501", "B008", "B905"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

@@ -1,0 +1,33 @@
+name: docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Create virtual environment
+        run: uv venv --python 3.12
+      - name: Install with docs extras
+        run: uv pip install -e ".[docs]"
+      - name: Build site
+        run: uv run mkdocs build --strict
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: site
+          branch: gh-pages
+          clean: true
+          single-commit: true

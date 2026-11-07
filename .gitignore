@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Test / build artifacts
+tests/baseline_new/
+tests/result_images/
+# mkdocs build output
+site/
+scratch_*.py
+scratch_*/
+
+# OS
+.DS_Store
