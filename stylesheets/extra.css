@@ -1,0 +1,44 @@
+/* nicefigs docs — NICE palette accents.
+   Overrides Material's named "teal" with the exact NICE teal (#25c5a6) for the
+   header background, and uses it for links / hover / selection / highlights. */
+
+[data-md-color-primary="teal"] {
+  --md-primary-fg-color:        #25c5a6;
+  --md-primary-fg-color--light: #4fd3ba;
+  --md-primary-fg-color--dark:  #1aa88c;
+}
+
+[data-md-color-accent="teal"] {
+  --md-accent-fg-color:             #1aa88c;
+  --md-accent-fg-color--transparent: rgba(37, 197, 166, 0.12);
+}
+
+/* text selection + inline ==highlight== in the NICE teal */
+::selection {
+  background: rgba(37, 197, 166, 0.30);
+}
+.md-typeset mark {
+  background-color: rgba(37, 197, 166, 0.35);
+}
+
+/* Figures: centred, at their rendered size (200 dpi PNG, one image pixel per
+   CSS pixel), shrunk to the content width when wider. */
+.md-typeset img {
+  display: block;
+  margin: 0.8em auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* A heading kept for the browser tab, navigation and screen readers only. */
+.md-typeset .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

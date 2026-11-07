@@ -1,0 +1,1320 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Publication-grade, modular matplotlib plotting for geoscience.">
+      
+      
+      
+        <link rel="canonical" href="https://earthyscience.github.io/nicefigs/guide/plots/">
+      
+      
+        <link rel="prev" href="../colormaps/">
+      
+      
+        <link rel="next" href="../animation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/logo/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>Plots (images, scatter, timeseries, ...) - nicefigs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#plots" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="nicefigs" class="md-header__button md-logo" aria-label="nicefigs" data-md-component="logo">
+      
+  <img src="../../assets/logo/nicefigs-mark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            nicefigs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Plots (images, scatter, timeseries, ...)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EarthyScience/nicefigs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EarthyScience/nicefigs
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="nicefigs" class="md-nav__button md-logo" aria-label="nicefigs" data-md-component="logo">
+      
+  <img src="../../assets/logo/nicefigs-mark.svg" alt="logo">
+
+    </a>
+    nicefigs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EarthyScience/nicefigs" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    EarthyScience/nicefigs
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gallery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../styling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Styling & themes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../figures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Figures & sizing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../maps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Maps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../colormaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Colormaps & palettes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plots (images, scatter, timeseries, ...)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plots (images, scatter, timeseries, ...)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#showing-images-and-heatmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Showing images and heatmaps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scatter-plots-with-encodings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scatter plots with encodings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agreement-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agreement plots
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#time-series" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Time series
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparing-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparing models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ranking-and-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ranking and trade-offs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scorecards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scorecards
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bar-charts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bar charts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vertical-sections-and-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vertical sections and profiles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hovmoller-diagrams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hovmöller diagrams
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#composites-of-many-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composites of many channels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plotting-eigen-spectra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plotting eigen-spectra
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#labelling-axes-with-units-and-directions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Labelling axes with units and directions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../animation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Animation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="plots">Plots<a class="headerlink" href="#plots" title="Permanent link">&para;</a></h1>
+<p>This page covers the plotting helpers beyond maps: images, scatter and
+agreement plots, time series, model comparisons, rankings, scorecards,
+vertical sections and Hovmöller diagrams. Every helper takes <code>ax=None</code> and
+creates a figure when it is missing; see the
+<a href="../../quickstart/#calling-conventions">calling conventions</a> for what each
+returns.</p>
+<h2 id="showing-images-and-heatmaps">Showing images and heatmaps<a class="headerlink" href="#showing-images-and-heatmaps" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="image" href="../../api/#nicefigs.images.image"><code>image()</code></a> shows an intensity array coloured by <code>cmap</code>, or an
+<code>(H, W, 3|4)</code> colour image, without ticks. <code>stretch=True</code> contrast-stretches a
+colour image per channel. <a class="autorefs autorefs-internal" title="heatmap" href="../../api/#nicefigs.images.heatmap"><code>heatmap()</code></a> adds row and column
+labels and, with <code>annotate=True</code>, the value of each cell.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax_img</span><span class="p">,</span> <span class="n">ax_hm</span><span class="p">)</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span> <span class="n">panel_aspect</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">nf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">rgb_patch</span><span class="p">(),</span> <span class="n">stretch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"RGB patch"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax_img</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">nf</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">data</span><span class="o">.</span><span class="n">heatmap_matrix</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)),</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">row_labels</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s2">"ABCDE"</span><span class="p">),</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">col_labels</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">"c</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)],</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">annotate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">ax</span><span class="o">=</span><span class="n">ax_hm</span><span class="p">,</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Image and heatmap" src="../../assets/guide/plots-image-heatmap.png" /></p>
+<p>A three-channel array is drawn as colour; a two-dimensional array is drawn
+with <code>cmap</code>.</p>
+<p><a class="autorefs autorefs-internal" title="image_grid" href="../../api/#nicefigs.images.image_grid"><code>image_grid()</code></a> lays out several images with one shared
+colour scale and colorbar. <code>colorbar_mode</code> is <code>"single"</code> (default), <code>"row"</code>,
+<code>"each"</code> or <code>"none"</code>; <code>shared_scale=False</code> gives each image its own limits.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">regional_grid</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">i</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">image_grid</span><span class="p">(</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">images</span><span class="p">,</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">width</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">cmap</span><span class="o">=</span><span class="s2">"Spectral_r"</span><span class="p">,</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">colorbar_label</span><span class="o">=</span><span class="s2">"value"</span><span class="p">,</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">titles</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">"member </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)],</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">)</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">nf</span><span class="o">.</span><span class="n">label_panels</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Image grid" src="../../assets/guide/plots-image-grid.png" /></p>
+<p>All six panels share one colorbar, so equal colours mean equal values.</p>
+<p>For land-cover rasters, pass a <a class="autorefs autorefs-internal" title="Categorical
+
+
+  
+      dataclass
+  " href="../../api/#nicefigs.palettes.Categorical"><code>Categorical</code></a> palette's
+<code>.to_rgb()</code> to <code>image()</code>; see
+<a href="../colormaps/#categorical-land-cover-palettes">Colormaps &amp; palettes</a>.</p>
+<h2 id="scatter-plots-with-encodings">Scatter plots with encodings<a class="headerlink" href="#scatter-plots-with-encodings" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="scatter" href="../../api/#nicefigs.scatter"><code>scatter()</code></a> maps extra variables onto marker shape (a
+categorical <code>group</code>), size (<code>size</code>, scaled into <code>size_range</code>) and colour (a
+continuous <code>hue</code>, or <code>group</code>), and builds a legend for each.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">scatter_bubbles</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">140</span><span class="p">)</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">ax</span><span class="p">,</span> <span class="n">artists</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">d</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">group</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"group"</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"size"</span><span class="p">],</span> <span class="n">size_label</span><span class="o">=</span><span class="s2">"area [km²]"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">)</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_labels</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="s2">"predictor"</span><span class="p">,</span> <span class="s2">"response"</span><span class="p">)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="nb">print</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">artists</span><span class="p">))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>['A', 'B', 'C']
+</code></pre></div>
+<p><img alt="Scatter with group and size encodings" src="../../assets/guide/plots-scatter.png" /></p>
+<p>With <code>group</code>, the second return value maps each group to its collection.
+<code>hue=values, colorbar=True</code> colours by a continuous variable instead;
+<code>xerr</code>/<code>yerr</code> add error bars and <code>point_labels</code> with <code>label_top=n</code> labels the
+<code>n</code> most extreme points.</p>
+<h2 id="agreement-plots">Agreement plots<a class="headerlink" href="#agreement-plots" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="agreement" href="../../api/#nicefigs.kde.agreement"><code>agreement()</code></a> compares predictions with observations:
+a density of the point cloud (<code>density="kde"</code>, <code>"hexbin"</code> or <code>"hist"</code>), a
+dashed 1:1 line, outliers as faint points, a regression line and a metrics
+box. It returns the metrics as a dict.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">obs</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">xy_agreement</span><span class="p">()</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">ax</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">agreement</span><span class="p">(</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">obs</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">"observed runoff"</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">"predicted runoff"</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">"mm d⁻¹"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"half"</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="p">)</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="nb">print</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>{'slope': 0.906, 'intercept': 1.001, 'r2': 0.721, 'rmse': 1.846, 'bias': 0.533, 'n': 1500.0}
+</code></pre></div>
+<p><img alt="Agreement plot" src="../../assets/guide/plots-agreement.png" /></p>
+<p>The printed metrics are the ones in the box on the plot.</p>
+<h2 id="time-series">Time series<a class="headerlink" href="#time-series" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="timeseries" href="../../api/#nicefigs.timeseries"><code>timeseries()</code></a> plots named series against dates and
+picks date ticks for the span. <code>bands</code> shades an interval per series and
+<code>highlight</code> draws one series thicker and on top.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">dates</span><span class="p">,</span> <span class="n">series</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">n_days</span><span class="o">=</span><span class="mi">365</span><span class="p">)</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">model</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="s2">"model A"</span><span class="p">]</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">dates</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">series</span><span class="p">,</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">bands</span><span class="o">=</span><span class="p">{</span><span class="s2">"model A"</span><span class="p">:</span> <span class="p">(</span><span class="n">model</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">model</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)},</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">highlight</span><span class="o">=</span><span class="s2">"observed"</span><span class="p">,</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"air temperature"</span><span class="p">,</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="n">yunits</span><span class="o">=</span><span class="s2">"degC"</span><span class="p">,</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="n">width</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Time series with a band" src="../../assets/guide/plots-timeseries.png" /></p>
+<p>The observed series sits on top of the two models; model A carries its band.</p>
+<p>Sparse observations go in <code>obs=(dates, values)</code> and are drawn as markers.
+<code>obs_hue</code> colours them by a third variable, with <code>obs_colorbar=True</code> for its
+colorbar:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">dates</span><span class="p">,</span> <span class="n">series</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">n_days</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">series</span><span class="o">=</span><span class="p">[</span><span class="s2">"model"</span><span class="p">])</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="mi">60</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">obs_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">dates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="n">obs_vals</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="s2">"model"</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="n">dates</span><span class="p">,</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    <span class="n">series</span><span class="p">,</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>    <span class="n">obs</span><span class="o">=</span><span class="p">(</span><span class="n">obs_dates</span><span class="p">,</span> <span class="n">obs_vals</span><span class="p">),</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>    <span class="n">obs_hue</span><span class="o">=</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12000</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>    <span class="n">obs_cmap</span><span class="o">=</span><span class="s2">"viridis"</span><span class="p">,</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="n">obs_hue_label</span><span class="o">=</span><span class="s2">"altitude [m]"</span><span class="p">,</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    <span class="n">obs_colorbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"CO2"</span><span class="p">,</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>    <span class="n">yunits</span><span class="o">=</span><span class="s2">"ppm"</span><span class="p">,</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>    <span class="n">width</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Observations coloured by altitude" src="../../assets/guide/plots-timeseries-obs.png" /></p>
+<p><code>styles</code> sets per-series line styles and <code>annotation</code> writes a short note in
+the panel, which suits small multiples built with
+<a class="autorefs autorefs-internal" title="facet" href="../../api/#nicefigs.panels.facet"><code>facet()</code></a> (see <a href="../figures/#small-multiples-with-facet">Figures &amp; sizing</a>).</p>
+<h2 id="comparing-models">Comparing models<a class="headerlink" href="#comparing-models" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="model_comparison" href="../../api/#nicefigs.comparison.model_comparison"><code>model_comparison()</code></a> takes
+<code>{metric: {model: values}}</code>, or <code>{metric: {model: {group: values}}}</code> for a
+second split such as timescale, and draws one panel per metric with a violin
+(<code>kind="violin"</code>), box (<code>"box"</code>) or strip (<code>"strip"</code>) per model.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">model_scores</span><span class="p">()[</span><span class="s2">"scores"</span><span class="p">]</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">model_comparison</span><span class="p">(</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="n">scores</span><span class="p">,</span> <span class="n">group_label</span><span class="o">=</span><span class="s2">"timescale"</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"box"</span><span class="p">,</span> <span class="n">metric_units</span><span class="o">=</span><span class="p">{</span><span class="s2">"RMSE"</span><span class="p">:</span> <span class="s2">"mm"</span><span class="p">}</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">)</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">axes</span><span class="p">))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>3
+</code></pre></div>
+<p><img alt="Model comparison" src="../../assets/guide/plots-model-comparison.png" /></p>
+<p>One panel per metric, with the groups dodged inside each model and one shared
+legend.</p>
+<p><a class="autorefs autorefs-internal" title="taylor" href="../../api/#nicefigs.taylor"><code>taylor()</code></a> summarises the same question in one diagram:
+each model sits at its correlation (angle) and standard deviation (radius),
+with centred-RMS arcs around the reference. Give each model a <code>correlation</code>
+and either <code>std</code> or <code>std_ratio</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">taylor</span><span class="p">(</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="p">[</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>        <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"model A"</span><span class="p">,</span> <span class="s2">"correlation"</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span> <span class="s2">"std_ratio"</span><span class="p">:</span> <span class="mf">0.98</span><span class="p">},</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>        <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"model B"</span><span class="p">,</span> <span class="s2">"correlation"</span><span class="p">:</span> <span class="mf">0.80</span><span class="p">,</span> <span class="s2">"std_ratio"</span><span class="p">:</span> <span class="mf">1.15</span><span class="p">},</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>        <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"model C"</span><span class="p">,</span> <span class="s2">"correlation"</span><span class="p">:</span> <span class="mf">0.65</span><span class="p">,</span> <span class="s2">"std_ratio"</span><span class="p">:</span> <span class="mf">0.70</span><span class="p">},</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="p">],</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="n">width</span><span class="o">=</span><span class="s2">"half"</span><span class="p">,</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Taylor diagram" src="../../assets/guide/plots-taylor.png" /></p>
+<p>Model A lies closest to the reference star, so it has the smallest centred
+RMS error.</p>
+<h2 id="ranking-and-trade-offs">Ranking and trade-offs<a class="headerlink" href="#ranking-and-trade-offs" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="pareto" href="../../api/#nicefigs.pareto"><code>pareto()</code></a> scatters a trade-off and draws the
+non-dominated <a class="autorefs autorefs-internal" title="frontier" href="../../api/#nicefigs.pareto.frontier"><code>frontier()</code></a> on top, one per group with
+<code>frontier_per_group=True</code>. <code>xdirection</code> and <code>ydirection</code> say which way is
+better; they define the frontier and add arrows to the axis labels.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pareto_tradeoff</span><span class="p">()</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="n">ax</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">pareto</span><span class="p">(</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="n">d</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">d</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="n">group</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">"group"</span><span class="p">],</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="n">frontier_per_group</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="n">xdirection</span><span class="o">=</span><span class="s2">"higher_better"</span><span class="p">,</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="n">ydirection</span><span class="o">=</span><span class="s2">"higher_better"</span><span class="p">,</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="n">xlabel</span><span class="o">=</span><span class="s2">"speed"</span><span class="p">,</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"skill"</span><span class="p">,</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="p">)</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="n">front</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">frontier</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">xdirection</span><span class="o">=</span><span class="s2">"higher_better"</span><span class="p">,</span> <span class="n">ydirection</span><span class="o">=</span><span class="s2">"higher_better"</span><span class="p">)</span>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">front</span><span class="p">),</span> <span class="s2">"of"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]),</span> <span class="s2">"points are Pareto-optimal"</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>14 of 36 points are Pareto-optimal
+</code></pre></div>
+<p><img alt="Pareto frontiers per group" src="../../assets/guide/plots-pareto.png" /></p>
+<p>Each group traces its own frontier: no point on it can gain speed without
+losing skill. <code>baselines={label: y}</code> adds labelled horizontal reference lines.</p>
+<p><a class="autorefs autorefs-internal" title="caterpillar" href="../../api/#nicefigs.ranking.caterpillar"><code>caterpillar()</code></a> ranks per-item values with error bars,
+optionally with a <code>baseline</code> series offset next to each item and a <code>summary</code>
+annotation.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">s</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">site_metrics</span><span class="p">(</span><span class="n">n_sites</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">caterpillar</span><span class="p">(</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">s</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">],</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">s</span><span class="p">[</span><span class="s2">"bias"</span><span class="p">],</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>    <span class="n">err</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="s2">"std"</span><span class="p">],</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    <span class="n">groups</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="s2">"layer"</span><span class="p">],</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="n">baseline</span><span class="o">=</span><span class="n">s</span><span class="p">[</span><span class="s2">"baseline"</span><span class="p">],</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="n">baseline_label</span><span class="o">=</span><span class="s2">"reference model"</span><span class="p">,</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>    <span class="n">value_label</span><span class="o">=</span><span class="s2">"bias"</span><span class="p">,</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>    <span class="n">value_units</span><span class="o">=</span><span class="s2">"ppmv"</span><span class="p">,</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>    <span class="n">ref_line</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Caterpillar plot" src="../../assets/guide/plots-caterpillar.png" /></p>
+<p>Items are sorted by value, coloured by group, with the reference model's
+value offset beside each.</p>
+<h2 id="scorecards">Scorecards<a class="headerlink" href="#scorecards" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="scorecard" href="../../api/#nicefigs.tables.scorecard"><code>scorecard()</code></a> renders a model × metric table as
+coloured cells. By default each column is ranked on its own, using each
+metric's <code>direction</code> from <a class="autorefs autorefs-internal" title="DIRECTIONS
+
+
+  
+      module-attribute
+  " href="../../api/#nicefigs.units.DIRECTIONS"><code>DIRECTIONS</code></a>, and the best
+cell per column is outlined.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="n">ms</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">model_scores</span><span class="p">()</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ms</span><span class="p">[</span><span class="s2">"scores"</span><span class="p">][</span><span class="n">m</span><span class="p">][</span><span class="n">model</span><span class="p">][</span><span class="s2">"daily"</span><span class="p">])</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">[</span><span class="s2">"metrics"</span><span class="p">]]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">[</span><span class="s2">"models"</span><span class="p">]]</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="p">)</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">scorecard</span><span class="p">(</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>    <span class="n">values</span><span class="p">,</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>    <span class="n">row_labels</span><span class="o">=</span><span class="n">ms</span><span class="p">[</span><span class="s2">"models"</span><span class="p">],</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>    <span class="n">col_labels</span><span class="o">=</span><span class="n">ms</span><span class="p">[</span><span class="s2">"metrics"</span><span class="p">],</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>    <span class="n">direction</span><span class="o">=</span><span class="p">{</span><span class="s2">"RMSE"</span><span class="p">:</span> <span class="s2">"lower_better"</span><span class="p">,</span> <span class="s2">"Bias"</span><span class="p">:</span> <span class="s2">"target"</span><span class="p">,</span> <span class="s2">"R$^2$"</span><span class="p">:</span> <span class="s2">"higher_better"</span><span class="p">},</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>    <span class="n">col_units</span><span class="o">=</span><span class="p">{</span><span class="s2">"RMSE"</span><span class="p">:</span> <span class="s2">"mm"</span><span class="p">},</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Scorecard" src="../../assets/guide/plots-scorecard.png" /></p>
+<p>Bias is ranked by closeness to zero, the default <code>target</code>.</p>
+<p>To colour cells by their value instead, pass a <code>norm</code>, for example from
+<a class="autorefs autorefs-internal" title="scorecard_diverging_cmap" href="../../api/#nicefigs.palettes.scorecard_diverging_cmap"><code>scorecard_diverging_cmap()</code></a>.
+<code>col_groups</code> gaps and titles groups of columns, <code>square=True</code> forces square
+cells and <code>colorbar=True</code> adds a colorbar.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="n">pct_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))])</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">scorecard_diverging_cmap</span><span class="p">()</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">scorecard</span><span class="p">(</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>    <span class="n">pct_diff</span><span class="p">,</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>    <span class="n">row_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"baseline"</span><span class="p">,</span> <span class="s2">"model A"</span><span class="p">,</span> <span class="s2">"model B"</span><span class="p">],</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>    <span class="n">col_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"Z500"</span><span class="p">,</span> <span class="s2">"T850"</span><span class="p">,</span> <span class="s2">"T2m"</span><span class="p">,</span> <span class="s2">"MSL"</span><span class="p">],</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>    <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>    <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>    <span class="n">direction</span><span class="o">=</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">([</span><span class="s2">"Z500"</span><span class="p">,</span> <span class="s2">"T850"</span><span class="p">,</span> <span class="s2">"T2m"</span><span class="p">,</span> <span class="s2">"MSL"</span><span class="p">],</span> <span class="s2">"lower_better"</span><span class="p">),</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>    <span class="n">col_groups</span><span class="o">=</span><span class="p">[</span><span class="s2">"upper air"</span><span class="p">,</span> <span class="s2">"upper air"</span><span class="p">,</span> <span class="s2">"surface"</span><span class="p">,</span> <span class="s2">"surface"</span><span class="p">],</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>    <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>    <span class="n">cell_format</span><span class="o">=</span><span class="s2">"</span><span class="si">{:+.0f}</span><span class="s2">"</span><span class="p">,</span>
+<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>    <span class="n">colorbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a>    <span class="n">colorbar_label</span><span class="o">=</span><span class="s2">"RMSE difference [%]"</span><span class="p">,</span>
+<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Scorecard coloured by value" src="../../assets/guide/plots-scorecard-diverging.png" /></p>
+<p>Negative differences, an improvement over the baseline, are blue; the outline
+marks the lowest value per column.</p>
+<p><a class="autorefs autorefs-internal" title="skill_gap" href="../../api/#nicefigs.tables.skill_gap"><code>skill_gap()</code></a> computes the signed distance of each value
+from a reference, positive where the value is better. Passing <code>reference=</code> to
+<code>scorecard</code> colours cells by this gap, so metrics in different units share one
+scale.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">gap</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">skill_gap</span><span class="p">([[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]],</span> <span class="n">direction</span><span class="o">=</span><span class="p">[</span><span class="s2">"higher_better"</span><span class="p">,</span> <span class="s2">"lower_better"</span><span class="p">])</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>[[-0.2 -0.2]]
+</code></pre></div>
+<p>Both values are 0.2 worse than the reference, whichever way their metric is
+read.</p>
+<h2 id="bar-charts">Bar charts<a class="headerlink" href="#bar-charts" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="grouped" href="../../api/#nicefigs.bars.grouped"><code>grouped_bars()</code></a> dodges one bar per
+<code>(category, series)</code>; <a class="autorefs autorefs-internal" title="stacked" href="../../api/#nicefigs.bars.stacked"><code>stacked_bars()</code></a> stacks the
+series within each category, as fractions with <code>normalize=True</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">regions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Amazon"</span><span class="p">,</span> <span class="s2">"Congo"</span><span class="p">,</span> <span class="s2">"Boreal"</span><span class="p">,</span> <span class="s2">"Sahel"</span><span class="p">]</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax_g</span><span class="p">,</span> <span class="n">ax_s</span><span class="p">)</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span> <span class="n">panel_aspect</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="n">nf</span><span class="o">.</span><span class="n">grouped_bars</span><span class="p">(</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>    <span class="n">regions</span><span class="p">,</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>    <span class="p">{</span><span class="s2">"model A"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.72</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mf">0.80</span><span class="p">,</span> <span class="mf">0.55</span><span class="p">],</span> <span class="s2">"model B"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.81</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.63</span><span class="p">]},</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>    <span class="n">value_label</span><span class="o">=</span><span class="s2">"skill"</span><span class="p">,</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>    <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>    <span class="n">ax</span><span class="o">=</span><span class="n">ax_g</span><span class="p">,</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="p">)</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="n">nf</span><span class="o">.</span><span class="n">stacked_bars</span><span class="p">(</span>
+<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a>    <span class="n">regions</span><span class="p">,</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>    <span class="p">{</span><span class="s2">"forest"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="s2">"grass"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="s2">"bare"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]},</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>    <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>    <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>    <span class="n">ax</span><span class="o">=</span><span class="n">ax_s</span><span class="p">,</span>
+<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Grouped and stacked bars" src="../../assets/guide/plots-bars.png" /></p>
+<h2 id="vertical-sections-and-profiles">Vertical sections and profiles<a class="headerlink" href="#vertical-sections-and-profiles" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="cross_section" href="../../api/#nicefigs.sections.cross_section"><code>cross_section()</code></a> draws a field over a horizontal
+and a vertical coordinate, such as latitude × pressure.
+<a class="autorefs autorefs-internal" title="cross_section_panels" href="../../api/#nicefigs.sections.cross_section_panels"><code>cross_section_panels()</code></a> lays out several
+with shared colorbars: fields named in <code>diff_fields</code> go on a symmetric
+diverging scale, and <code>log_y=True</code> log-scales the vertical axis.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="n">cs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">cross_section_field</span><span class="p">()</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="n">value</span> <span class="o">=</span> <span class="n">cs</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">cross_section_panels</span><span class="p">(</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>    <span class="p">{</span><span class="s2">"CO₂"</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">"anomaly"</span><span class="p">:</span> <span class="n">value</span> <span class="o">-</span> <span class="n">value</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)},</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>    <span class="n">cs</span><span class="p">[</span><span class="s2">"lats"</span><span class="p">],</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>    <span class="n">cs</span><span class="p">[</span><span class="s2">"levels"</span><span class="p">],</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>    <span class="n">diff_fields</span><span class="o">=</span><span class="p">{</span><span class="s2">"anomaly"</span><span class="p">},</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>    <span class="n">value_label</span><span class="o">=</span><span class="s2">"CO₂ [ppm]"</span><span class="p">,</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>    <span class="n">diff_label</span><span class="o">=</span><span class="s2">"Δ CO₂ [ppm]"</span><span class="p">,</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>    <span class="n">log_y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Cross-section panels" src="../../assets/guide/plots-cross-section.png" /></p>
+<p>The anomaly panel gets its own diverging colorbar, centred on zero.</p>
+<p><a class="autorefs autorefs-internal" title="profile" href="../../api/#nicefigs.sections.profile"><code>profile()</code></a> draws value-versus-level profiles with an
+inverted vertical axis and dashed <code>baselines</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="n">vp</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">vertical_profiles</span><span class="p">()</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">profile</span><span class="p">(</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    <span class="n">vp</span><span class="p">[</span><span class="s2">"profiles"</span><span class="p">],</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    <span class="n">vp</span><span class="p">[</span><span class="s2">"levels"</span><span class="p">],</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    <span class="n">baselines</span><span class="o">=</span><span class="p">{</span><span class="s2">"reference"</span><span class="p">:</span> <span class="n">vp</span><span class="p">[</span><span class="s2">"baseline"</span><span class="p">]},</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>    <span class="n">xlabel</span><span class="o">=</span><span class="s2">"CO₂"</span><span class="p">,</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>    <span class="n">xunits</span><span class="o">=</span><span class="s2">"ppmv"</span><span class="p">,</span>
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"pressure"</span><span class="p">,</span>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>    <span class="n">yunits</span><span class="o">=</span><span class="s2">"hPa"</span><span class="p">,</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>    <span class="n">log_y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>    <span class="n">width</span><span class="o">=</span><span class="s2">"half"</span><span class="p">,</span>
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Vertical profiles" src="../../assets/guide/plots-profile.png" /></p>
+<h2 id="hovmoller-diagrams">Hovmöller diagrams<a class="headerlink" href="#hovmoller-diagrams" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="hovmoller" href="../../api/#nicefigs.hovmoller"><code>hovmoller()</code></a> draws a field over time and one spatial
+coordinate; <a class="autorefs autorefs-internal" title="hovmoller_panels" href="../../api/#nicefigs.hovmoller.hovmoller_panels"><code>hovmoller_panels()</code></a> lays out model,
+reference and difference with split colorbars, like <code>cross_section_panels</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="n">h</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">hovmoller_field</span><span class="p">()</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">hovmoller_panels</span><span class="p">(</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>    <span class="p">{</span><span class="s2">"Model"</span><span class="p">:</span> <span class="n">h</span><span class="p">[</span><span class="s2">"value"</span><span class="p">],</span> <span class="s2">"Reference"</span><span class="p">:</span> <span class="n">h</span><span class="p">[</span><span class="s2">"reference"</span><span class="p">],</span> <span class="s2">"Difference"</span><span class="p">:</span> <span class="n">h</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span> <span class="o">-</span> <span class="n">h</span><span class="p">[</span><span class="s2">"reference"</span><span class="p">]},</span>
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>    <span class="n">h</span><span class="p">[</span><span class="s2">"times"</span><span class="p">],</span>
+<a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a>    <span class="n">h</span><span class="p">[</span><span class="s2">"lats"</span><span class="p">],</span>
+<a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a>    <span class="n">diff_fields</span><span class="o">=</span><span class="p">{</span><span class="s2">"Difference"</span><span class="p">},</span>
+<a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a>    <span class="n">value_label</span><span class="o">=</span><span class="s2">"CO₂ [ppm]"</span><span class="p">,</span>
+<a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>    <span class="n">diff_label</span><span class="o">=</span><span class="s2">"Δ CO₂ [ppm]"</span><span class="p">,</span>
+<a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Hovmöller panels" src="../../assets/guide/plots-hovmoller.png" /></p>
+<h2 id="composites-of-many-channels">Composites of many channels<a class="headerlink" href="#composites-of-many-channels" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="pca_rgb" href="../../api/#nicefigs.images.pca_rgb"><code>pca_rgb()</code></a> projects an <code>(H, W, C)</code> field onto its first
+three principal components and returns a stretched <code>(H, W, 3)</code> image. With
+<code>return_basis=True</code> it also returns the projection and its colour limits;
+passing that <code>basis</code> to later calls keeps several patches on one colour scale.
+<code>image(..., overlay_contour=mask)</code> outlines a mask on top.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="n">cube</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="n">rgb</span><span class="p">,</span> <span class="n">basis</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">pca_rgb</span><span class="p">(</span><span class="n">cube</span><span class="p">,</span> <span class="n">return_basis</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="s2">"single"</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="n">nf</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">overlay_contour</span><span class="o">=</span><span class="n">cube</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">cube</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">rgb</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">rgb</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="nb">float</span><span class="p">(</span><span class="n">rgb</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>(64, 64, 3) 0.0 1.0
+</code></pre></div>
+<p><img alt="PCA composite with a mask contour" src="../../assets/guide/plots-pca-rgb.png" /></p>
+<h2 id="plotting-eigen-spectra">Plotting eigen-spectra<a class="headerlink" href="#plotting-eigen-spectra" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="spectrum" href="../../api/#nicefigs.spectra.spectrum"><code>spectrum()</code></a> plots covariance eigenvalues <code>λ_k</code> against
+rank <code>k</code> on log–log axes, normalised to <code>λ_k / Σλ</code> by default. Pass one 1-D
+array, a list, or a <code>{name: eigenvalues}</code> dict to overlay several states;
+<code>reference_alpha</code> adds a <code>k^-α</code> power law through the first series' leading
+value:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="n">nf</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="s2">"paper"</span><span class="p">)</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="n">spectra</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">eigen_spectra</span><span class="p">()</span>  <span class="c1"># {"lead 6 h": λ, "lead 24 h": λ, "lead 72 h": λ}</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">nf</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mf">0.42</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s2">"constrained"</span><span class="p">)</span>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="n">nf</span><span class="o">.</span><span class="n">spectrum</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reference_alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="n">nf</span><span class="o">.</span><span class="n">spectrum</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cumulative</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Eigenvalue decay and cumulative explained variance" src="../../assets/guide/plots-spectrum.png" /></p>
+<p><code>cumulative=True</code> (right) plots the cumulative explained-variance fraction on a
+log rank axis, with one labelled dotted guide per threshold and a marker where
+each series first reaches it. Each spectrum is sorted descending and loses its
+non-finite, non-positive and round-off-sized (<code>λ ≤ rtol · λ_max</code>) eigenvalues,
+so the rank-deficient tail of a sample covariance does not distort the log
+axis; set <code>rtol=0</code> to keep every positive eigenvalue.</p>
+<h2 id="labelling-axes-with-units-and-directions">Labelling axes with units and directions<a class="headerlink" href="#labelling-axes-with-units-and-directions" title="Permanent link">&para;</a></h2>
+<p><a class="autorefs autorefs-internal" title="axis_label" href="../../api/#nicefigs.units.axis_label"><code>axis_label()</code></a> composes <code>"Quantity [unit]"</code> labels and
+prettifies the unit with <a class="autorefs autorefs-internal" title="prettify_unit" href="../../api/#nicefigs.units.prettify_unit"><code>prettify_unit()</code></a>; a
+<code>direction</code> from <a class="autorefs autorefs-internal" title="DIRECTIONS
+
+
+  
+      module-attribute
+  " href="../../api/#nicefigs.units.DIRECTIONS"><code>DIRECTIONS</code></a> appends an arrow.
+<a class="autorefs autorefs-internal" title="metric_label" href="../../api/#nicefigs.units.metric_label"><code>metric_label()</code></a> looks a metric key up in
+<a class="autorefs autorefs-internal" title="METRIC_NAMES
+
+
+  
+      module-attribute
+  " href="../../api/#nicefigs.units.METRIC_NAMES"><code>METRIC_NAMES</code></a>, and with <code>direction=True</code> its arrow in
+<a class="autorefs autorefs-internal" title="METRIC_DIRECTION
+
+
+  
+      module-attribute
+  " href="../../api/#nicefigs.units.METRIC_DIRECTION"><code>METRIC_DIRECTION</code></a>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">nicefigs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nf</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">nf</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="s2">"flux"</span><span class="p">,</span> <span class="s2">"gC m-2 d-1"</span><span class="p">))</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">nf</span><span class="o">.</span><span class="n">axis_label</span><span class="p">(</span><span class="s2">"skill"</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="s2">"higher_better"</span><span class="p">))</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">nf</span><span class="o">.</span><span class="n">metric_label</span><span class="p">(</span><span class="s2">"rmse"</span><span class="p">,</span> <span class="s2">"mm"</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>flux [gC m⁻² d⁻¹]
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>skill ↑
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>RMSE [mm] ↓
+</code></pre></div>
+<p><code>"target"</code> adds no arrow; every helper that asks which way is better
+(<code>scorecard</code>, <code>skill_gap</code>, <code>lines</code>, <code>pareto</code>) takes the same three strings.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
