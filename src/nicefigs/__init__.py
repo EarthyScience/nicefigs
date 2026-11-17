@@ -30,6 +30,15 @@ from .colormaps2d import (
     hsv_legend,
 )
 from .comparison import model_comparison
+from .diagrams import (
+    FLUX_COLORS,
+    FluxArrow,
+    FluxDiagram,
+    diagram_arrow,
+    diagram_box,
+    flux_diagram,
+    flux_legend,
+)
 from .figure import TextIssue, check_text_overlaps, figure, figure_size, save, subplots
 from .hovmoller import hovmoller, hovmoller_panels
 from .images import heatmap, image, image_grid, overlay_grid, pca_rgb
@@ -59,6 +68,7 @@ from .palettes import (
     cmap,
     diverging_norm,
     elevation_cmap,
+    legend_handle,
     qualitative,
     robust_limits,
     role_color,
@@ -172,6 +182,7 @@ __all__ = [
     "Role",
     "role_color",
     "role_style",
+    "legend_handle",
     # artist palettes
     "artist_palette",
     "artist_cmap",
@@ -221,6 +232,13 @@ __all__ = [
     "stacked_bars",
     "scorecard",
     "skill_gap",
+    "diagram_box",
+    "diagram_arrow",
+    "flux_diagram",
+    "flux_legend",
+    "FluxDiagram",
+    "FluxArrow",
+    "FLUX_COLORS",
     "DIRECTIONS",
     "cross_section",
     "cross_section_panels",

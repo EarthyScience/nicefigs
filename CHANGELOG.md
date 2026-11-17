@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `flux_diagram` draws a box model's budget: a grid of boxes coloured on a diverging
+  scale, with sign-aware arrows ∝ √|value| for vertical, horizontal, lateral and ground
+  fluxes, an optional split of the vertical flux, and per-box notes; `flux_legend`
+  explains it, and `data.box_budget` gives a closed example budget.
+- `diagram_box` and `diagram_arrow`, the labelled box and the point-width arrow
+  `flux_diagram` is built from, for flowcharts and schematics.
+- `profile(bands=...)` shades a range, such as an interquartile range, behind a
+  profile in its colour.
+- `legend_handle` builds a line, marker or band legend entry in the `role_style`
+  vocabulary.
+
 ## [1.0.0] - 2026-11-07
 
 First public release.

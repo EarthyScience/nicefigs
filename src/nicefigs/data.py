@@ -579,3 +579,50 @@ def eigen_spectra(
         x -= x.mean(axis=0)
         out[nm] = np.linalg.eigvalsh(x.T @ x / (n_samples - 1))[::-1]
     return out
+
+
+def box_budget(
+    *,
+    seed: int = 41,
+    n_rows: int = 3,
+    n_cols: int = 5,
+) -> dict[str, Any]:
+    """A closed budget of a grid of boxes, for :func:`nicefigs.flux_diagram`.
+
+    Rows are stacked layers, bottom first, and columns sit side by side. Every box closes:
+    its storage change is its lateral inflow plus the vertical flux through its bottom
+    minus the one through its top, plus the ground flux for the bottom row.
+
+    Args:
+        seed: Random seed.
+        n_rows: Number of layers.
+        n_cols: Number of columns.
+
+    Returns:
+        ``storage`` and ``lateral`` of shape ``(n_rows, n_cols)``; ``vertical``, upward
+        through the top of every row but the last, of shape ``(n_rows - 1, n_cols)``;
+        ``ground``, upward into the bottom row, of shape ``(n_cols,)``; ``parts``, the
+        mixing (``"m"``) and convective (``"c"``) shares of ``vertical``; and
+        ``row_labels`` and ``col_labels``.
+    """
+    rng = _rng(seed)
+    x = np.linspace(-1.0, 1.0, n_cols)
+    storage = np.round(rng.normal(0.0, 0.4, (n_rows, n_cols)), 2)
+    shape = np.sin(np.pi * (x[None, :] + rng.uniform(0.2, 0.6, (n_rows - 1, 1))))
+    vertical = np.round(30 * shape * rng.uniform(0.3, 1.0, (n_rows - 1, 1)), 1)
+    ground = np.round(rng.normal(0.0, 2.0, n_cols), 2)
+    up_in = np.vstack([ground[None, :], vertical])
+    up_out = np.vstack([vertical, np.zeros((1, n_cols))])
+    lateral = storage - up_in + up_out
+    convective = np.round(vertical * rng.uniform(0.0, 0.05, vertical.shape), 2)
+    mixing = np.round(vertical * rng.uniform(0.0, 0.02, vertical.shape), 2)
+    return {
+        "storage": storage,
+        "lateral": lateral,
+        "vertical": vertical,
+        "ground": ground,
+        "parts": {"c": convective, "m": mixing},
+        "row_labels": ["Boundary layer", "Free troposphere", "Stratosphere"][:n_rows]
+        + [f"Layer {k + 1}" for k in range(3, n_rows)],
+        "col_labels": [f"Column {j + 1}" for j in range(n_cols)],
+    }

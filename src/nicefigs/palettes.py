@@ -13,6 +13,7 @@ from typing import Any
 import matplotlib as mpl
 import matplotlib.colors as mcolors
 import numpy as np
+from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from numpy.typing import ArrayLike
 
@@ -234,6 +235,45 @@ def role_style(
         fill = r.filled if filled is None else filled
         kw.update(marker=r.marker, markeredgecolor=r.color, markerfacecolor=r.color if fill else "none")
     return {**kw, **overrides}
+
+
+def legend_handle(label: str, kind: str = "line", **style: Any) -> Line2D | Patch:
+    """A legend entry drawn like a line, a marker or a band, for ``ax.legend(handles=...)``.
+
+    Use it for entries that no plotted artist carries, e.g. a band drawn without a label or
+    one entry standing for many panels. ``kind`` takes the vocabulary of :func:`role_style`,
+    whose output can be passed as ``style``.
+
+    Args:
+        label: Legend text.
+        kind: ``"line"`` (line, no markers), ``"marker"`` (markers, no line), ``"both"``,
+            or ``"band"`` (a filled swatch).
+        **style: Matplotlib keywords of the entry, e.g. ``color``, ``linestyle``,
+            ``marker`` or ``alpha``; ``kind`` wins over a ``linestyle`` or ``marker``
+            it switches off.
+
+    Returns:
+        A :class:`~matplotlib.lines.Line2D`, or a :class:`~matplotlib.patches.Patch` for
+        ``"band"``.
+
+    Raises:
+        ValueError: Unknown ``kind``.
+
+    Example::
+
+        handles = [nf.legend_handle("observed 25–75 %", "band", color="k", alpha=0.25)]
+        ax.legend(handles=handles)
+    """
+    if kind not in _ROLE_KINDS:
+        raise ValueError(f"Unknown kind {kind!r}. Expected one of {_ROLE_KINDS}.")
+    if kind == "band":
+        return Patch(**{"linewidth": 0, **style}, label=label)
+    kw: dict[str, Any] = {}
+    if kind == "marker":
+        kw["linestyle"] = "none"
+    if kind == "line":
+        kw["marker"] = "none"
+    return Line2D([], [], **{**style, **kw}, label=label)
 
 
 def diverging_norm(vmin: float, vmax: float, center: float = 0.0) -> mcolors.TwoSlopeNorm:

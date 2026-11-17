@@ -416,6 +416,107 @@ nf.stacked_bars(
 
 ![Grouped and stacked bars](../assets/guide/plots-bars.png)
 
+## Box-and-arrow diagrams
+
+[`flux_diagram()`][nicefigs.flux_diagram] draws the budget of a box model: a grid of
+boxes, rows stacked bottom first and columns side by side, each coloured and labelled by
+its value on a diverging scale, with an arrow for every flux between them. Arrows point
+the way the flux goes and are ∝ √|value| wide, in points, on one scale per kind of flux.
+
+```python
+import nicefigs as nf
+from nicefigs import data
+
+nf.set_theme("paper")
+b = data.box_budget(n_rows=2, n_cols=3)
+ax, diagram = nf.flux_diagram(
+    b["storage"],
+    vertical=b["vertical"],
+    ground=b["ground"],
+    row_labels=["Lower", "Upper"],
+    col_labels=["West", "Centre", "East"],
+    width="full",
+)
+print(len(diagram.of_kind("vertical")), "vertical and", len(diagram.of_kind("ground")), "ground arrows")
+```
+
+```text
+3 vertical and 3 ground arrows
+```
+
+![Flux diagram](../assets/guide/plots-flux-diagram.png)
+
+`vertical` flows from row `k` up into row `k + 1`, `ground` from the hatched ground into
+the bottom row, and `horizontal` from column `j` into column `j + 1`; a negative value
+reverses the arrow. `lateral` is a net inflow through a box's sides, such as a
+convergence: it draws an arrow on both sides, in when positive, and prints the value
+inside the box. `parts` splits each vertical flux into named shares printed beside it.
+
+Box `(k, j)` is centred at `x = j + 0.5`, `y = k` in data coordinates, so further
+annotation goes straight onto `ax`. The returned
+[`FluxDiagram`][nicefigs.FluxDiagram] holds the colour `mappable` for
+[`colorbar()`][nicefigs.colorbar], and [`flux_legend()`][nicefigs.flux_legend] explains
+the colours:
+
+```python
+import nicefigs as nf
+from nicefigs import data
+
+nf.set_theme("paper")
+b = data.box_budget()
+fig, (top, bottom) = nf.subplots(2, 1, width="double", aspect=0.75, height_ratios=[3, 1], hspace=0.15)
+reference = {"lateral": 30.0, "ground": 2.0}
+norm = nf.diverging_norm(-0.6, 0.6)
+_, diagram = nf.flux_diagram(
+    b["storage"], ax=top, lateral=b["lateral"], vertical=b["vertical"], ground=b["ground"],
+    parts=b["parts"], row_labels=b["row_labels"], norm=norm, reference=reference,
+)
+nf.flux_diagram(
+    b["storage"].sum(0, keepdims=True), ax=bottom, lateral=b["lateral"].sum(0, keepdims=True),
+    ground=b["ground"], row_labels=["Column"], col_labels=b["col_labels"], norm=norm, reference=reference,
+)
+nf.colorbar(diagram.mappable, bottom, location="bottom", pad=0.03, shrink=0.5, label="storage change")
+nf.flux_legend(
+    diagram,
+    {"box": "storage change", "lateral": "lateral inflow", "vertical": "upward flux", "ground": "ground flux"},
+    parts={"c": "convective", "m": "mixing"},
+    target=fig, loc="upper center", bbox_to_anchor=(0.5, 0.02), ncol=3,
+)
+```
+
+![Two flux diagrams sharing colours and widths](../assets/guide/plots-flux-diagram-panels.png)
+
+Passing one `norm` and one `reference` to both panels puts their colours and arrow widths
+on the same scale; by default each diagram scales to its own largest value.
+
+[`diagram_box()`][nicefigs.diagram_box] and [`diagram_arrow()`][nicefigs.diagram_arrow]
+are the pieces `flux_diagram` is built from; place them anywhere for a flowchart or a
+schematic. Positions are data coordinates and arrow widths are points, so the drawing
+keeps its shape whatever the axes' aspect:
+
+```python
+import nicefigs as nf
+
+nf.set_theme("paper")
+fig, ax = nf.subplots(width="full", aspect=0.3)
+ax.set_xlim(0, 4)
+ax.set_ylim(-0.5, 0.75)
+ax.set_axis_off()
+steps = ["meteorology", "transport", "observation\noperator", "scores"]
+for i, step in enumerate(steps):
+    nf.diagram_box(ax, (i + 0.5, 0), 0.7, 0.4, text=step, facecolor="#dbe6f1")
+    if i:
+        nf.diagram_arrow(ax, (i - 0.15, 0), (i + 0.15, 0), width=1.2)
+nf.diagram_arrow(
+    ax, (3.5, 0.22), (1.5, 0.22), width=0.8, connectionstyle="arc3,rad=0.25",
+    label="tune", label_offset=(0, 12),
+)
+```
+
+![A flowchart](../assets/guide/plots-flowchart.png)
+
+A `connectionstyle` curves an arrow; `label` and `label_offset` place text at its midpoint.
+
 ## Vertical sections and profiles
 
 [`cross_section()`][nicefigs.cross_section] draws a field over a horizontal
@@ -469,6 +570,38 @@ ax = nf.profile(
 ```
 
 ![Vertical profiles](../assets/guide/plots-profile.png)
+
+`bands={name: (low, high)}` shades a range behind the profile of the same name, in its
+colour, e.g. the interquartile range of observations around their median. Bands add no
+legend entry; [`legend_handle()`][nicefigs.legend_handle] makes one:
+
+```python
+import nicefigs as nf
+from nicefigs import data
+
+nf.set_theme("paper")
+vp = data.vertical_profiles(names=["observed"])
+median = vp["profiles"]["observed"]
+ax = nf.profile(
+    {"observed": median},
+    vp["levels"],
+    bands={"observed": (median - 1.5, median + 1.0)},
+    colors={"observed": "#4477AA"},
+    xlabel="CO₂",
+    xunits="ppmv",
+    ylabel="pressure",
+    yunits="hPa",
+    width="half",
+)
+ax.legend(
+    handles=[
+        nf.legend_handle("observed median", "both", color="#4477AA", marker="o", markersize=3),
+        nf.legend_handle("observed 25–75 %", "band", color="#4477AA", alpha=0.25),
+    ]
+)
+```
+
+![A profile with its interquartile band](../assets/guide/plots-profile-band.png)
 
 ## Hovmöller diagrams
 

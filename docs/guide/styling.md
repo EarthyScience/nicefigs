@@ -169,6 +169,10 @@ a variant of a method the open marker (`filled=False`).
     needed for graphics. Label null curves directly; the grey never carries
     meaning alone.
 
+[`legend_handle()`][nicefigs.legend_handle] builds a legend entry in the same
+vocabulary, for an entry no plotted artist carries, e.g.
+`nf.legend_handle("seed range", "band", **nf.role_style("null", "band"))`.
+
 Map your methods to roles once, e.g. `{"unet": "primary", "persistence":
 "contrast"}`, and every figure inherits the same colours.
 

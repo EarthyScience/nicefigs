@@ -46,3 +46,18 @@ def test_hovmoller_non_robust_limits_span_the_data():
         assert m.get_clim() == pytest.approx((np.min(h["value"]), np.max(h["value"])))
     finally:
         plt.close(ax.figure)
+
+
+def test_profile_bands_shade_the_given_range_in_the_profile_colour():
+    from matplotlib.colors import to_rgba
+
+    y = np.linspace(0.0, 10.0, 11)
+    low, high = np.full(11, -1.0), np.full(11, 2.0)
+    ax = nf.profile(
+        {"obs": np.zeros(11)}, y, colors={"obs": "#4477AA"}, bands={"obs": (low, high)}, band_alpha=0.3
+    )
+    (band,) = ax.collections
+    xs = band.get_paths()[0].vertices[:, 0]
+    assert xs.min() == -1.0 and xs.max() == 2.0
+    np.testing.assert_allclose(band.get_facecolor()[0], to_rgba("#4477AA", 0.3))
+    assert ax.get_legend() is None or "obs" not in [t.get_text() for t in ax.get_legend().get_texts()][1:]
