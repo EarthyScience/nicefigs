@@ -44,6 +44,7 @@ def test_callables_are_callable():
         "SCORECARD_DIVERGING_BOUNDARIES",
         "DIRECTIONS",
         "ROLES",
+        "FLUX_COLORS",
     }
     for name in nf.__all__:
         if name in non_callable_allowed:

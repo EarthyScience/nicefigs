@@ -33,6 +33,8 @@ def profile(
     marker: str = "o",
     baselines: Mapping[str, ArrayLike] | None = None,
     baseline_colors: Mapping[str, str] | None = None,
+    bands: Mapping[str, tuple[ArrayLike, ArrayLike]] | None = None,
+    band_alpha: float = 0.25,
     xlabel: str = "",
     xunits: str | None = None,
     ylabel: str = "level",
@@ -61,6 +63,10 @@ def profile(
         marker: Marker used for profiles not in ``markers``.
         baselines: ``{name: values}`` reference profiles drawn dashed.
         baseline_colors: ``{name: colour}`` for ``baselines``; default grey.
+        bands: ``{name: (low, high)}`` ranges along ``y``, e.g. an interquartile range,
+            shaded behind the lines in the colour of the profile of the same name (grey
+            if there is none). Bands add no legend entry; see :func:`legend_handle`.
+        band_alpha: Opacity of the bands.
         xlabel: Value-axis label.
         xunits: Value-axis units, appended to the label.
         ylabel: Vertical-axis label.
@@ -85,6 +91,13 @@ def profile(
 
     if ax is None:
         _, ax = subplots(width=width, aspect=aspect)
+
+    for nm, (low, high) in (bands or {}).items():
+        low, high = np.asarray(low, dtype=float), np.asarray(high, dtype=float)
+        yy = np.arange(low.size) if y is None else np.asarray(y, dtype=float)
+        ax.fill_betweenx(
+            yy, low, high, color=palette.get(nm, "#888888"), alpha=band_alpha, linewidth=0, zorder=1
+        )
 
     for nm in names:
         v = np.asarray(profiles[nm], dtype=float)

@@ -84,6 +84,10 @@ and the [Gallery](gallery.md) for runnable examples.
 
 ::: nicefigs.tables
 
+## `nicefigs.diagrams`
+
+::: nicefigs.diagrams
+
 ## `nicefigs.sections`
 
 ::: nicefigs.sections

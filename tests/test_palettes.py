@@ -7,6 +7,7 @@ import matplotlib.colors as mcolors
 import numpy as np
 import pytest
 
+import nicefigs as nf
 from nicefigs.palettes import (
     CATEGORICAL,
     DEFAULTS,
@@ -228,3 +229,22 @@ def test_scorecard_diverging_cmap_extend_colors_distinct_from_bands():
 def test_qualitative_unknown_palette_raises():
     with pytest.raises(KeyError, match="Unknown palette"):
         qualitative(3, "no-such-palette")
+
+
+@pytest.mark.parametrize(
+    ("kind", "drawn"),
+    [("line", (True, False)), ("marker", (False, True)), ("both", (True, True))],
+)
+def test_legend_handle_draws_what_its_kind_says(kind, drawn):
+    h = nf.legend_handle("x", kind, color="k", marker="o", linestyle="-")
+    assert (h.get_linestyle() != "None", h.get_marker() not in ("None", "none")) == drawn
+    assert h.get_label() == "x"
+
+
+def test_legend_handle_band_is_a_filled_swatch():
+    from matplotlib.patches import Patch
+
+    h = nf.legend_handle("IQR", "band", **nf.role_style("null", "band"), alpha=0.25)
+    assert isinstance(h, Patch) and h.get_alpha() == 0.25 and h.get_label() == "IQR"
+    with pytest.raises(ValueError):
+        nf.legend_handle("x", "ribbon")

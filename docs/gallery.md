@@ -319,6 +319,21 @@ horizontal bar with the colormap's extend triangles.
 --8<-- "examples/30_scorecard_diverging.py"
 ```
 
+## Budgets
+
+### 33 — Flux diagram {#flux-diagram}
+
+[`nicefigs.flux_diagram`][nicefigs.flux_diagram] draws a box model's budget: boxes
+coloured by their storage change, lateral inflow on both sides of each box, upward fluxes
+between the layers with their convective and mixing parts, and the ground flux, every
+arrow ∝ √|value| wide. [`flux_legend`][nicefigs.flux_legend] explains the encoding.
+
+![Flux diagram](gallery/33_flux_diagram.png)
+
+```python
+--8<-- "examples/33_flux_diagram.py"
+```
+
 ## Vertical structure
 
 ### 22 — Cross-section / curtain {#cross-section}
