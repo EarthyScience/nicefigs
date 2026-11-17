@@ -512,7 +512,7 @@ def flux_diagram(
                     hatch="//////",
                     linewidth=0.0,
                     zorder=1,
-                    gid="ground",
+                    gid="ground_hatch",
                 )
             )
             ax.plot([j + 0.06, j + 0.94], [_GROUND_Y, _GROUND_Y], color="0.55", lw=0.5, zorder=1)
