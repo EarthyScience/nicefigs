@@ -6,6 +6,8 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-18
+
 ### Added
 
 - `polygon_mesh` draws cells of any shape (hexagons and pentagons of a grid) from their
@@ -61,5 +63,6 @@ First public release.
   the axes first. One unit-argument scheme and one "which way is better"
   vocabulary, `DIRECTIONS`.
 
-[Unreleased]: https://github.com/EarthyScience/nicefigs/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/EarthyScience/nicefigs/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/EarthyScience/nicefigs/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/EarthyScience/nicefigs/releases/tag/v1.0.0
