@@ -121,6 +121,10 @@ def test_colorbar_in_own_axes_is_styled_and_exclusive_with_ax():
         nf.colorbar(im, ax, cax=cax)
     with pytest.raises(ValueError, match="exactly one"):
         nf.colorbar(im)
+    with pytest.raises(TypeError, match="without cax"):
+        nf.colorbar(im, ax, spacing="proportional")
+    bounded = nf.colorbar(im, cax=fig.add_axes((0.1, 0.1, 0.03, 0.5)), spacing="proportional")
+    assert bounded.ax.get_ylabel() == ""
 
 
 def test_legend_handle_band_carries_a_hatch():
