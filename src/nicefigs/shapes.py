@@ -29,7 +29,7 @@ def polygon_mesh(
     vmax: float | None = None,
     norm: Normalize | None = None,
     facecolor: Any = "none",
-    edgecolor: Any = "face",
+    edgecolor: Any = None,
     linewidth: float = 0.4,
     rasterized: bool = False,
     **kwargs: Any,
@@ -53,7 +53,8 @@ def polygon_mesh(
         vmax: Upper colour limit; the data maximum if omitted.
         norm: Normalisation; overrides ``vmin`` and ``vmax``.
         facecolor: Fill of every cell when neither ``values`` nor ``categories`` is given.
-        edgecolor: Edge colour; ``"face"`` draws each edge in its cell's fill, which hides seams.
+        edgecolor: Edge colour; ``"face"`` draws each edge in its cell's fill, which hides seams;
+            the default is ``"face"`` for filled cells and black for unfilled ones.
         linewidth: Edge width (pt).
         rasterized: Rasterise the collection, to keep a vector figure small.
         **kwargs: Passed to :class:`~matplotlib.collections.PolyCollection` (e.g. ``transform``).
@@ -68,6 +69,9 @@ def polygon_mesh(
     if sum(arg is not None for arg in (values, categories, facecolors)) > 1:
         raise ValueError("give values, categories or facecolors, not several")
     n = len(polygons)
+    if edgecolor is None:
+        unfilled = values is None and categories is None and facecolors is None
+        edgecolor = "black" if unfilled else "face"
     kw: dict[str, Any] = {
         "edgecolors": edgecolor,
         "linewidths": linewidth,
