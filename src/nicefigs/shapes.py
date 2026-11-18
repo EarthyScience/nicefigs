@@ -23,6 +23,7 @@ def polygon_mesh(
     *,
     categories: Sequence[Any] | None = None,
     colors: Mapping[Any, Any] | None = None,
+    facecolors: Sequence[Any] | None = None,
     cmap: str = "viridis",
     vmin: float | None = None,
     vmax: float | None = None,
@@ -36,8 +37,8 @@ def polygon_mesh(
     """Draw polygons, such as hexagonal and pentagonal grid cells, filled by value or by category.
 
     Cells may have different corner counts. Fill them with a colour scale (``values``),
-    with a colour per class (``categories`` and ``colors``), or leave them unfilled
-    (outlines only). The collection is added to ``ax`` and the data limits are updated; on a
+    with a colour per class (``categories`` and ``colors``), with a colour given per cell
+    (``facecolors``), or leave them unfilled (outlines only). The collection is added to ``ax`` and the data limits are updated; on a
     map the caller sets the extent and passes ``transform=``.
 
     Args:
@@ -46,6 +47,7 @@ def polygon_mesh(
         values: One value per cell, mapped through ``cmap`` and the limits.
         categories: One class per cell; needs ``colors``.
         colors: Class to colour, for ``categories``.
+        facecolors: One fill colour per cell, for a colouring the caller already computed.
         cmap: Colormap name or object, for ``values``.
         vmin: Lower colour limit; the data minimum if omitted.
         vmax: Upper colour limit; the data maximum if omitted.
@@ -60,11 +62,11 @@ def polygon_mesh(
         The collection; for ``values`` it is also the mappable of a colorbar.
 
     Raises:
-        ValueError: If both ``values`` and ``categories`` are given, ``categories`` lacks
+        ValueError: If more than one of ``values``, ``categories`` and ``facecolors`` is given, ``categories`` lacks
             ``colors`` or a class has no colour, or a length differs from ``polygons``.
     """
-    if values is not None and categories is not None:
-        raise ValueError("give values or categories, not both")
+    if sum(arg is not None for arg in (values, categories, facecolors)) > 1:
+        raise ValueError("give values, categories or facecolors, not several")
     n = len(polygons)
     kw: dict[str, Any] = {
         "edgecolors": edgecolor,
@@ -84,6 +86,10 @@ def polygon_mesh(
                 vmin=finite.min() if vmin is None else vmin, vmax=finite.max() if vmax is None else vmax
             )
         coll = PolyCollection(polygons, array=values, cmap=resolve_cmap(cmap), norm=norm, **kw)
+    elif facecolors is not None:
+        if len(facecolors) != n:
+            raise ValueError(f"facecolors has {len(facecolors)} entries, expected {n}")
+        coll = PolyCollection(polygons, facecolors=list(facecolors), **kw)
     elif categories is not None:
         if colors is None:
             raise ValueError("categories need colors, a mapping from class to colour")

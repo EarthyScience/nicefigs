@@ -36,10 +36,16 @@ def test_polygon_mesh_by_category_fills_each_cell_with_its_class_colour():
     assert [tuple(c[:3]) for c in coll.get_facecolor()] == [(1.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
 
 
+def test_polygon_mesh_takes_a_colour_per_cell_as_given():
+    fig, ax = plt.subplots()
+    coll = nf.polygon_mesh(ax, [_hexagon(0, 0), _hexagon(3, 0)], facecolors=["red", (0.0, 0.0, 1.0, 1.0)])
+    assert [tuple(c[:3]) for c in coll.get_facecolor()] == [(1.0, 0.0, 0.0), (0.0, 0.0, 1.0)]
+
+
 def test_polygon_mesh_rejects_ambiguous_or_incomplete_fills():
     fig, ax = plt.subplots()
     cells = [_hexagon(0, 0)]
-    with pytest.raises(ValueError, match="not both"):
+    with pytest.raises(ValueError, match="not several"):
         nf.polygon_mesh(ax, cells, [1.0], categories=["a"], colors={"a": "r"})
     with pytest.raises(ValueError, match="need colors"):
         nf.polygon_mesh(ax, cells, categories=["a"])

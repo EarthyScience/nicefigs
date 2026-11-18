@@ -9,7 +9,7 @@ to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - `polygon_mesh` draws cells of any shape (hexagons and pentagons of a grid) from their
-  corners, filled by value, by class or not at all.
+  corners, filled by value, by class, by a given colour or not at all.
 - `outline_boxes` outlines rectangles in data coordinates, to highlight cells, rows or
   columns of a grid.
 - `one_to_one`, `kde_contours`, `scatter_regression` and `histogram`: the 1:1 line, Gaussian-KDE
