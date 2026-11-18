@@ -136,4 +136,4 @@ def test_polygon_mesh_without_a_fill_draws_visible_outlines():
     fig, ax = plt.subplots()
     coll = nf.polygon_mesh(ax, [_hexagon(0, 0)])
     assert tuple(coll.get_edgecolor()[0][:3]) == (0.0, 0.0, 0.0)
-    assert coll.get_facecolor()[0][3] == 0.0
+    assert len(coll.get_facecolor()) == 0  # "none"
