@@ -20,6 +20,10 @@ and the [Gallery](gallery.md) for runnable examples.
 
 ::: nicefigs.palettes
 
+## `nicefigs.shapes`
+
+::: nicefigs.shapes
+
 ## `nicefigs.colorbars`
 
 ::: nicefigs.colorbars

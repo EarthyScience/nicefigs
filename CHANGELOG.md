@@ -8,6 +8,14 @@ to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- `polygon_mesh` draws cells of any shape (hexagons and pentagons of a grid) from their
+  corners, filled by value, by class, by a given colour or not at all.
+- `outline_boxes` outlines rectangles in data coordinates, to highlight cells, rows or
+  columns of a grid.
+- `one_to_one`, `kde_contours`, `scatter_regression` and `histogram`: the 1:1 line, Gaussian-KDE
+  contours over paired samples, the target-against-model panel with a regression per model, and a
+  histogram that overlays on one axes.
+- `colorbar(cax=...)` draws a bar into axes of your own, with the same styling.
 - `flux_diagram` draws a box model's budget: a grid of boxes coloured on a diverging
   scale, with sign-aware arrows ∝ √|value| for vertical, horizontal, lateral and ground
   fluxes, an optional split of the vertical flux, and per-box notes; `flux_legend`

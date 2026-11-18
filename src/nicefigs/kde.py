@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Mapping
+
     from matplotlib.axes import Axes
     from numpy.typing import ArrayLike
 
@@ -185,3 +187,133 @@ def agreement(
             bbox=dict(boxstyle="round,pad=0.35", fc="white", ec="#cccccc", lw=0.4, alpha=0.85),
         )
     return ax, stats
+
+
+def _finite_stride(x: ArrayLike, y: ArrayLike, n: int) -> tuple[np.ndarray, np.ndarray]:
+    """Finite pairs of ``(x, y)``, thinned by an even stride to at most ``n`` (deterministic)."""
+    x = np.asarray(x, dtype=float).ravel()
+    y = np.asarray(y, dtype=float).ravel()
+    ok = np.isfinite(x) & np.isfinite(y)
+    x, y = x[ok], y[ok]
+    if x.size > n:
+        idx = np.linspace(0, x.size - 1, n).astype(int)
+        x, y = x[idx], y[idx]
+    return x, y
+
+
+def kde_contours(
+    ax: Axes,
+    x: ArrayLike,
+    y: ArrayLike,
+    color: Any,
+    *,
+    max_points: int = 4000,
+    levels: int = 4,
+    linewidth: float = 0.7,
+    alpha: float = 0.9,
+) -> None:
+    """Overlay Gaussian-KDE density contour lines of paired samples.
+
+    The density is evaluated over the 1st to 99th percentile of each variable, so sparse
+    outliers do not drag a low contour across the panel. Too few points, no spread or a
+    singular covariance draw nothing.
+
+    Args:
+        ax: Target axes.
+        x: Samples; non-finite pairs are dropped.
+        y: Paired samples, same length as ``x``.
+        color: Contour colour.
+        max_points: Pairs the density is estimated from, thinned by an even stride.
+        levels: Number of contour levels.
+        linewidth: Contour line width (pt).
+        alpha: Contour opacity.
+    """
+    from scipy.stats import gaussian_kde
+
+    x, y = _finite_stride(x, y, max_points)
+    if x.size < 10 or np.allclose(x.std(), 0) or np.allclose(y.std(), 0):
+        return
+    try:
+        kde = gaussian_kde(np.vstack([x, y]))
+    except np.linalg.LinAlgError:
+        return
+    xs = np.linspace(*np.percentile(x, [1, 99]), 70)
+    ys = np.linspace(*np.percentile(y, [1, 99]), 70)
+    gx, gy = np.meshgrid(xs, ys)
+    z = kde(np.vstack([gx.ravel(), gy.ravel()])).reshape(gx.shape)
+    ax.contour(gx, gy, z, levels=levels, colors=color, linewidths=linewidth, alpha=alpha)
+
+
+def scatter_regression(
+    x: ArrayLike,
+    models: Mapping[str, ArrayLike],
+    *,
+    ax: Axes | None = None,
+    colors: Mapping[str, Any],
+    xlabel: str = "",
+    ylabel: str = "",
+    regress: Callable[[np.ndarray, np.ndarray], tuple[float, float, float, float]] | None = None,
+    max_points: int = 4000,
+    legend: bool = True,
+) -> Axes:
+    """Target-against-model panel: 1:1 line, faint scatter, density contours and a regression per model.
+
+    Each model's legend entry carries its slope, R² and RMSE to the 1:1 line (what a model
+    against a target reports is how far it is from the target, not how well a free line fits).
+    Both axes span the 1st to 99th percentile of all values and are equal.
+
+    Args:
+        x: The target values.
+        models: Name to values of each model against ``x``, in legend order.
+        ax: Target axes; a new half-width figure if omitted.
+        colors: Colour per model name.
+        xlabel: x label.
+        ylabel: y label.
+        regress: ``(x, y) -> (slope, intercept, r2, rmse)``; ordinary least squares and the RMSE to the 1:1 line if omitted.
+        max_points: Points scattered per model, thinned by an even stride.
+        legend: Draw the legend.
+
+    Returns:
+        The axes.
+    """
+    if ax is None:
+        from .figure import subplots
+
+        _, ax = subplots(width="half", aspect=1.0)
+    th = get_theme()
+    regress = regress or _regress_to_identity
+    x = np.asarray(x, dtype=float)
+    thinned = {name: _finite_stride(x, y, max_points) for name, y in models.items()}
+    finite = np.concatenate([a for pair in thinned.values() for a in pair])
+    lo, hi = np.nanpercentile(finite, [1, 99])
+    ax.plot([lo, hi], [lo, hi], "k--", lw=0.8, zorder=1)
+    for name, (xs, ys) in thinned.items():
+        ax.scatter(xs, ys, s=3, alpha=0.12, color=colors[name], edgecolors="none", zorder=2)
+    for name, y in models.items():
+        kde_contours(ax, x, y, colors[name], max_points=max_points)
+    xx = np.array([lo, hi])
+    for name, y in models.items():
+        slope, intercept, r2, rmse = regress(x, np.asarray(y, dtype=float))
+        ax.plot(
+            xx,
+            slope * xx + intercept,
+            color=colors[name],
+            lw=1.4,
+            zorder=4,
+            label=f"{name}: slope {slope:.2f}, R² {r2:.2f}, RMSE {rmse:.2f}",
+        )
+    ax.set_xlim(lo, hi)
+    ax.set_ylim(lo, hi)
+    ax.set_aspect("equal", "box")
+    ax.set_xlabel(xlabel, fontsize=th.fs_axis_label)
+    ax.set_ylabel(ylabel, fontsize=th.fs_axis_label)
+    if legend:
+        ax.legend(fontsize=th.fs_legend, loc="upper left", framealpha=0.85)
+    return ax
+
+
+def _regress_to_identity(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float, float]:
+    """``(slope, intercept, r2, rmse)`` of ``y`` on ``x``; the RMSE is to the 1:1 line."""
+    ok = np.isfinite(x) & np.isfinite(y)
+    a, b, r2, rmse, _ = _linfit(x[ok], y[ok])
+    return float(a), float(b), float(r2), rmse
