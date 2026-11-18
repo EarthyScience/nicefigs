@@ -19,6 +19,7 @@ from . import data
 from .animation import animate_maps, render_animation, save_animation, stitch_frames
 from .artists import ARTIST_PALETTES, HOCKNEY_CANYON, NICE, artist_cmap, artist_palette
 from .bars import grouped as grouped_bars
+from .bars import histogram
 from .bars import stacked as stacked_bars
 from .colorbars import colorbar, inset_histogram_colorbar, make_mappable
 from .colormaps2d import (
@@ -42,7 +43,7 @@ from .diagrams import (
 from .figure import TextIssue, check_text_overlaps, figure, figure_size, save, subplots
 from .hovmoller import hovmoller, hovmoller_panels
 from .images import heatmap, image, image_grid, overlay_grid, pca_rgb
-from .kde import agreement
+from .kde import agreement, kde_contours, scatter_regression
 from .lines import lines
 from .maps import (
     binned_map,
@@ -83,6 +84,8 @@ from .panels import (
     facet,
     grid,
     label_panels,
+    one_to_one,
+    outline_boxes,
     panel_label,
     reference_line,
     row_labels,
@@ -91,6 +94,7 @@ from .pareto import frontier, pareto
 from .ranking import caterpillar
 from .scatter import scatter
 from .sections import cross_section, cross_section_panels, profile
+from .shapes import polygon_mesh
 from .spectra import spectrum
 from .style import (
     COLORS,
@@ -161,6 +165,8 @@ __all__ = [
     "clean_title",
     "despine",
     "reference_line",
+    "one_to_one",
+    "outline_boxes",
     "facet",
     "row_labels",
     "col_labels",
@@ -221,6 +227,10 @@ __all__ = [
     # relational
     "scatter",
     "agreement",
+    "kde_contours",
+    "scatter_regression",
+    "polygon_mesh",
+    "histogram",
     "timeseries",
     "lines",
     "spectrum",

@@ -30,8 +30,10 @@ def _bbox_union(axes: Sequence[Axes]) -> tuple[float, float, float, float]:
 
 def colorbar(
     mappable: ScalarMappable,
-    ax: Axes | Sequence[Axes],
+    ax: Axes | Sequence[Axes] | None = None,
     *,
+    cax: Axes | None = None,
+    orientation: str = "vertical",
     label: str = "",
     location: str = "right",
     pad: float = 0.012,
@@ -40,12 +42,17 @@ def colorbar(
     extend: str = "neither",
     ticks: ArrayLike | None = None,
 ) -> Colorbar:
-    """Draw a slim colorbar flush to one axes, or spanning several.
+    """Draw a slim colorbar flush to one axes, or spanning several, or into axes of your own.
 
     Args:
         mappable: E.g. the return of ``imshow``, ``scatter`` or ``pcolormesh``,
             or one from :func:`make_mappable`.
-        ax: One axes, or a sequence of axes the bar should span.
+        ax: One axes, or a sequence of axes the bar should span. Omitted when ``cax`` is given.
+        cax: Axes the bar is drawn into, for a figure that lays its own bar out; the
+            placement arguments (``location``, ``pad``, ``thickness``, ``shrink``) then do
+            not apply, and the bar is styled like any other.
+        orientation: ``"vertical"`` or ``"horizontal"``; only read with ``cax`` (otherwise
+            ``location`` decides).
         label: Colorbar label.
         location: ``"right"``, ``"left"``, ``"bottom"`` or ``"top"``.
         pad: Gap between plot and bar, in figure fraction.
@@ -56,10 +63,22 @@ def colorbar(
 
     Returns:
         The colorbar.
+
+    Raises:
+        ValueError: If neither or both of ``ax`` and ``cax`` are given.
     """
+    if (ax is None) == (cax is None):
+        raise ValueError("colorbar takes exactly one of ax (the axes it spans) or cax (its own axes)")
+    th = get_theme()
+    if cax is not None:
+        cb = cax.figure.colorbar(mappable, cax=cax, orientation=orientation, extend=extend, ticks=ticks)
+        cb.outline.set_linewidth(0.4)
+        cb.ax.tick_params(labelsize=th.fs_tick, length=1.6, width=0.35, pad=1.2)
+        if label:
+            cb.set_label(label, fontsize=th.fs_annot, labelpad=2.0)
+        return cb
     axes = list(ax) if isinstance(ax, (list, tuple, np.ndarray)) else [ax]
     fig = axes[0].figure
-    th = get_theme()
     x0, y0, x1, y1 = _bbox_union(axes)
 
     if location in ("right", "left"):

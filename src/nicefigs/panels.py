@@ -436,6 +436,71 @@ def reference_line(
             )
 
 
+def one_to_one(
+    ax: Axes,
+    lo: float,
+    hi: float,
+    *,
+    margin: float = 0.05,
+    color: str = "#333333",
+    linestyle: str = "--",
+    linewidth: float = 0.8,
+    label: str | None = "1:1",
+    zorder: float = 1,
+) -> None:
+    """Draw the 1:1 line over a data range, extended by a margin so it clears the data.
+
+    Args:
+        ax: Target axes.
+        lo: Low end of the data range the line spans.
+        hi: High end of the data range the line spans.
+        margin: Extension at each end, as a fraction of ``hi - lo``; a degenerate range
+            extends by 0.1.
+        color: Line colour.
+        linestyle: Line style.
+        linewidth: Line width (pt).
+        label: Legend label; ``None`` leaves the line out of legends.
+        zorder: Line drawing order.
+    """
+    pad = (hi - lo) * margin or 0.1
+    ax.plot(
+        [lo - pad, hi + pad],
+        [lo - pad, hi + pad],
+        color=color,
+        linestyle=linestyle,
+        linewidth=linewidth,
+        label=label,
+        zorder=zorder,
+    )
+
+
+def outline_boxes(
+    ax: Axes,
+    boxes: Iterable[tuple[float, float, float, float]],
+    *,
+    color: str = "#222222",
+    linewidth: float = 2.0,
+    zorder: float = 5,
+) -> None:
+    """Outline rectangles in data coordinates, to highlight cells of a grid, a row or a column.
+
+    The outline is unfilled, so it sits on top of whatever the boxes surround.
+
+    Args:
+        ax: Target axes.
+        boxes: ``(x, y, width, height)`` of each rectangle, with ``(x, y)`` its lower-left corner.
+        color: Edge colour.
+        linewidth: Edge width (pt).
+        zorder: Drawing order.
+    """
+    from matplotlib.patches import Rectangle
+
+    for x, y, w, h in boxes:
+        ax.add_patch(
+            Rectangle((x, y), w, h, facecolor="none", edgecolor=color, linewidth=linewidth, zorder=zorder)
+        )
+
+
 def facet(
     items: Iterable[Any],
     draw: Callable[[Axes, Any, int], object],

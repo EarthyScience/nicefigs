@@ -178,3 +178,46 @@ def stacked(
     if legend:
         ax.legend(loc="center left", bbox_to_anchor=(1.01, 0.5), fontsize=th.fs_legend, frameon=False)
     return ax
+
+
+def histogram(
+    values: ArrayLike,
+    *,
+    ax: Axes | None = None,
+    bins: int | ArrayLike = 50,
+    density: bool = False,
+    color: Any = None,
+    label: str | None = None,
+    xlabel: str = "",
+    ylabel: str = "",
+    **kwargs: Any,
+) -> Axes:
+    """Draw a one-dimensional histogram, on an existing axes to overlay several.
+
+    Non-finite values are dropped. Call it again on the same axes with another colour to
+    compare distributions; give ``bins`` as the same edges to make them comparable.
+
+    Args:
+        values: The data.
+        ax: Target axes; a new half-width figure if omitted.
+        bins: Number of bins, or their edges.
+        density: Normalise to unit area.
+        color: Bar colour; the next colour of the axes cycle if omitted.
+        label: Legend label.
+        xlabel: x label.
+        ylabel: y label.
+        **kwargs: Passed to :meth:`~matplotlib.axes.Axes.hist` (e.g. ``alpha``, ``histtype``).
+
+    Returns:
+        The axes.
+    """
+    if ax is None:
+        _, ax = subplots(width="half", aspect=0.72)
+    th = get_theme()
+    v = np.asarray(values, dtype=float).ravel()
+    ax.hist(v[np.isfinite(v)], bins=bins, density=density, color=color, label=label, **kwargs)
+    if xlabel:
+        ax.set_xlabel(xlabel, fontsize=th.fs_axis_label)
+    if ylabel:
+        ax.set_ylabel(ylabel, fontsize=th.fs_axis_label)
+    return ax
