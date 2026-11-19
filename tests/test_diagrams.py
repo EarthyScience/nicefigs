@@ -251,3 +251,25 @@ def test_a_line_arrow_takes_its_join_and_cap_from_the_caller():
     soft = nf.diagram_arrow(ax, (0.0, 0.0), (1.0, 0.0), style="line", joinstyle="round", capstyle="round")
     assert (sharp.get_joinstyle(), sharp.get_capstyle()) == ("miter", "butt")
     assert (soft.get_joinstyle(), soft.get_capstyle()) == ("round", "round")
+
+
+@pytest.mark.parametrize("via", [[], None, np.empty((0, 2))], ids=["empty", "none", "empty-array"])
+def test_an_arrow_without_waypoints_is_one_straight_patch(via):
+    _, ax = nf.subplots()
+    nf.diagram_arrow(ax, (0.0, 0.0), (1.0, 0.0), via=via, style="line")
+    assert len(ax.lines) == 0 and len(ax.patches) == 1
+
+
+def test_an_arrow_takes_its_waypoints_as_an_array():
+    _, ax = nf.subplots()
+    nf.diagram_arrow(ax, (0.0, 0.0), (2.0, 0.0), via=np.array([[0.0, 1.0], [2.0, 1.0]]))
+    (shaft,) = ax.lines
+    np.testing.assert_array_equal(shaft.get_xydata(), [(0.0, 0.0), (0.0, 1.0), (2.0, 1.0)])
+
+
+def test_a_box_by_default_is_solid_rounded_and_unhatched():
+    _, ax = nf.subplots()
+    box = nf.diagram_box(ax, (0.5, 0.5), 0.4, 0.2)
+    path = box.get_path()
+    assert box.get_linestyle() == "-" and box.get_hatch() is None
+    assert path.CURVE3 in set(path.codes) or path.CURVE4 in set(path.codes)

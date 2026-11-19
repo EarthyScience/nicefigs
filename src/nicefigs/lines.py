@@ -44,13 +44,15 @@ def band(
         alpha: Fill opacity.
         zorder: Drawing order; below lines by default.
         label: Legend label; none by default.
-        **kwargs: Forwarded to :meth:`~matplotlib.axes.Axes.fill_between`, e.g. ``hatch``.
+        **kwargs: Forwarded to :meth:`~matplotlib.axes.Axes.fill_between`, e.g. ``hatch``, or
+            ``linewidth`` for an outline (none by default).
 
     Returns:
         The shaded polygon.
     """
     fill = ax.fill_between if along == "x" else ax.fill_betweenx
-    return fill(x, low, high, color=color, alpha=alpha, linewidth=0, zorder=zorder, label=label, **kwargs)
+    kw = {"linewidth": 0, **kwargs}
+    return fill(x, low, high, color=color, alpha=alpha, zorder=zorder, label=label, **kw)
 
 
 def lines(

@@ -221,7 +221,7 @@ def diagram_arrow(
     head_width: float | None = None,
     head_length: float | None = None,
     style: Literal["filled", "line"] = "filled",
-    via: Sequence[tuple[float, float]] = (),
+    via: Sequence[tuple[float, float]] | np.ndarray | None = None,
     linestyle: Any = "-",
     label: str = "",
     label_offset: tuple[float, float] = (0.0, 0.0),
@@ -270,8 +270,8 @@ def diagram_arrow(
     if style not in ("filled", "line"):
         raise ValueError(f"style must be 'filled' or 'line', got {style!r}")
     color = mpl.rcParams["text.color"] if color is None else color
-    if via:
-        corners = [tail, *via]
+    if via is not None and len(via):
+        corners = [tail, *(tuple(p) for p in via)]
         xs, ys = zip(*corners, strict=True)
         ax.plot(
             xs,
