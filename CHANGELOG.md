@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `diagram_arrow(style="line")` draws a flowchart connector: a stroked line with a filled
+  head, sized in points; `via` routes an arrow through corner points and `linestyle` dashes it.
+- `diagram_box` takes `linestyle` and `hatch`.
+
+### Changed
+
+- `diagram_box(rounding=0)` draws a plain rectangle, without zero-size corner curves.
+
 ## [1.1.0] - 2026-11-18
 
 ### Added

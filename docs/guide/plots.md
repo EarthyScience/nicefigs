@@ -517,6 +517,11 @@ nf.diagram_arrow(
 
 A `connectionstyle` curves an arrow; `label` and `label_offset` place text at its midpoint.
 
+For the connectors of a flowchart, `style="line"` draws a stroked line with a filled head
+instead of a solid shape, `via=[...]` routes the arrow through corner points (only its last
+segment carries the head), and `linestyle` dashes it. A box takes `linestyle` too, for a
+dashed frame around a group of stages, and `hatch`; `rounding=0` gives it square corners.
+
 ## Vertical sections and profiles
 
 [`cross_section()`][nicefigs.cross_section] draws a field over a horizontal
