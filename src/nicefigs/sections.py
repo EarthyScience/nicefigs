@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from .figure import subplots
+from .lines import band
 from .palettes import cmap as resolve_cmap
 from .palettes import qualitative, robust_limits, symmetric_limits
 from .style import get_theme
@@ -95,9 +96,7 @@ def profile(
     for nm, (low, high) in (bands or {}).items():
         low, high = np.asarray(low, dtype=float), np.asarray(high, dtype=float)
         yy = np.arange(low.size) if y is None else np.asarray(y, dtype=float)
-        ax.fill_betweenx(
-            yy, low, high, color=palette.get(nm, "#888888"), alpha=band_alpha, linewidth=0, zorder=1
-        )
+        band(ax, yy, low, high, along="y", color=palette.get(nm, "#888888"), alpha=band_alpha)
 
     for nm in names:
         v = np.asarray(profiles[nm], dtype=float)

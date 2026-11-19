@@ -608,6 +608,10 @@ ax.legend(
 
 ![A profile with its interquartile band](../assets/guide/plots-profile-band.png)
 
+A band of its own, on any axes, is [`band()`][nicefigs.band]: `nf.band(ax, x, low, high)`
+shades over the horizontal coordinate, `along="y"` up the vertical one, and `label=` gives
+it a legend entry. `lines`, `timeseries` and `profile` draw their `bands` with it.
+
 ## Hovmöller diagrams
 
 [`hovmoller()`][nicefigs.hovmoller] draws a field over time and one spatial

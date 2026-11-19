@@ -44,7 +44,7 @@ from .figure import TextIssue, check_text_overlaps, figure, figure_size, save, s
 from .hovmoller import hovmoller, hovmoller_panels
 from .images import heatmap, image, image_grid, overlay_grid, pca_rgb
 from .kde import agreement, kde_contours, scatter_regression
-from .lines import lines
+from .lines import band, lines
 from .maps import (
     binned_map,
     categorical_map,
@@ -232,6 +232,7 @@ __all__ = [
     "polygon_mesh",
     "histogram",
     "timeseries",
+    "band",
     "lines",
     "spectrum",
     "model_comparison",
