@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from numpy.typing import ArrayLike
 
+from .lines import band
 from .palettes import qualitative
 from .scatter import scatter as _scatter
 from .style import get_theme
@@ -155,7 +156,7 @@ def timeseries(
             n_bands = len(band_list)
             for bi, (lo, hi) in enumerate(band_list):
                 a = band_alpha * (bi + 1) / n_bands if n_bands > 1 else band_alpha
-                ax.fill_between(dates, lo, hi, color=cols[name], alpha=a, linewidth=0, zorder=1)
+                band(ax, dates, lo, hi, color=cols[name], alpha=a)
 
     proxy_handles = []
     if obs is not None:

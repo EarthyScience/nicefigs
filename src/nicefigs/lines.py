@@ -1,9 +1,9 @@
-"""Multi-series line plots against a numeric x (sweeps, thresholds, lead times)."""
+"""Multi-series line plots against a numeric x (sweeps, thresholds, lead times), and shaded ranges."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
 
@@ -13,7 +13,46 @@ from .units import axis_label
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
+    from matplotlib.collections import PolyCollection
     from numpy.typing import ArrayLike
+
+
+def band(
+    ax: Axes,
+    x: ArrayLike,
+    low: ArrayLike,
+    high: ArrayLike,
+    *,
+    along: Literal["x", "y"] = "x",
+    color: Any = "#888888",
+    alpha: float = 0.16,
+    zorder: float = 1.0,
+    label: str | None = None,
+    **kwargs: Any,
+) -> PolyCollection:
+    """Shade the range between ``low`` and ``high`` along a coordinate, such as a spread or an uncertainty.
+
+    Args:
+        ax: Axes to draw on.
+        x: Coordinate the band runs along: the horizontal one, or with ``along="y"`` the
+            vertical one, as for a profile against height or pressure.
+        low: Lower bound at each ``x``; a scalar for a constant bound.
+        high: Upper bound at each ``x``; a scalar for a constant bound.
+        along: ``"x"`` for a band over the horizontal coordinate, ``"y"`` for one up the
+            vertical coordinate.
+        color: Fill colour.
+        alpha: Fill opacity.
+        zorder: Drawing order; below lines by default.
+        label: Legend label; none by default.
+        **kwargs: Forwarded to :meth:`~matplotlib.axes.Axes.fill_between`, e.g. ``hatch``, or
+            ``linewidth`` for an outline (none by default).
+
+    Returns:
+        The shaded polygon.
+    """
+    fill = ax.fill_between if along == "x" else ax.fill_betweenx
+    kw = {"linewidth": 0, **kwargs}
+    return fill(x, low, high, color=color, alpha=alpha, zorder=zorder, label=label, **kw)
 
 
 def lines(
@@ -101,7 +140,7 @@ def lines(
         )
         if bands and name in bands:
             lo, hi = bands[name]
-            ax.fill_between(xs, lo, hi, color=cols[name], alpha=band_alpha, linewidth=0, zorder=1)
+            band(ax, xs, lo, hi, color=cols[name], alpha=band_alpha)
 
     if logx:
         ax.set_xscale("log", base=logx_base)

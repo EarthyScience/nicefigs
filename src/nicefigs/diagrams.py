@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 import matplotlib as mpl
 import matplotlib.colors as mcolors
@@ -162,6 +162,8 @@ def diagram_box(
     linewidth: float = 0.5,
     rounding: float = 0.05,
     textcolor: Any = None,
+    linestyle: Any = "-",
+    hatch: str | None = None,
     zorder: float = 2.0,
     **text_kw: Any,
 ) -> FancyBboxPatch:
@@ -178,6 +180,8 @@ def diagram_box(
         linewidth: Outline width (pt).
         rounding: Corner radius, in data units; 0 gives square corners.
         textcolor: Text colour; by default dark or white, whichever reads on ``facecolor``.
+        linestyle: Outline style, e.g. ``"--"`` for a dashed frame around a group.
+        hatch: Hatch pattern of the fill, e.g. ``"//"``.
         zorder: Drawing order of the box; its text draws above.
         **text_kw: Forwarded to :meth:`~matplotlib.axes.Axes.text`, e.g. ``fontsize`` or
             ``fontweight``.
@@ -190,10 +194,12 @@ def diagram_box(
         (x - width / 2, y - height / 2),
         width,
         height,
-        boxstyle=f"round,pad=0,rounding_size={rounding}",
+        boxstyle=f"round,pad=0,rounding_size={rounding}" if rounding > 0 else "square,pad=0",
         facecolor=facecolor,
         edgecolor=edgecolor,
         linewidth=linewidth,
+        linestyle=linestyle,
+        hatch=hatch,
         zorder=zorder,
         gid="box",
     )
@@ -214,49 +220,96 @@ def diagram_arrow(
     color: Any = None,
     head_width: float | None = None,
     head_length: float | None = None,
+    style: Literal["filled", "line"] = "filled",
+    via: Sequence[tuple[float, float]] | np.ndarray | None = None,
+    linestyle: Any = "-",
     label: str = "",
     label_offset: tuple[float, float] = (0.0, 0.0),
     zorder: float = 3.0,
     label_kw: Mapping[str, Any] | None = None,
     **kwargs: Any,
 ) -> FancyArrowPatch:
-    """Draw a filled arrow from ``tail`` to ``head``, its shaft ``width`` points wide.
+    """Draw an arrow from ``tail`` to ``head``, its shaft ``width`` points wide.
 
-    Widths are physical, so arrows keep their shape on axes of any aspect.
+    Widths are physical, so arrows keep their shape on axes of any aspect. A ``"filled"``
+    arrow is one solid shape, as a flux whose width carries a value; a ``"line"`` arrow is a
+    stroked line with a filled head, the connector of a flowchart. With ``via`` the arrow
+    runs through those points with right-angled or any other corners, and only its last
+    segment carries the head. Either way the tip ends exactly on ``head``.
 
     Args:
         ax: Axes to draw on.
         tail: Start, in data coordinates.
         head: Tip, in data coordinates.
-        width: Shaft width (pt).
+        width: Shaft width (pt); the line width of a ``"line"`` arrow.
         color: Fill colour; the text colour by default.
-        head_width: Head width (pt); by default ``max(3, 2.4 * width)``.
-        head_length: Head length (pt); by default ``max(2.6, 1.5 * width)``.
-        label: Text at the arrow's midpoint.
+        head_width: Head width (pt); by default ``max(3, 2.4 * width)`` for a filled arrow
+            and ``max(2.4, 3 * width)`` for a line arrow.
+        head_length: Head length (pt); by default ``max(2.6, 1.5 * width)`` for a filled
+            arrow and ``max(2.4, 3 * width)`` for a line arrow.
+        style: ``"filled"`` or ``"line"``.
+        via: Points the arrow passes through between ``tail`` and ``head``, in data
+            coordinates.
+        linestyle: Line style of a ``"line"`` arrow's shaft, e.g. ``"--"``.
+        label: Text at the midpoint of the arrow's last segment.
         label_offset: ``(dx, dy)`` of the label from the midpoint (pt).
         zorder: Drawing order; the label draws above.
         label_kw: Forwarded to :meth:`~matplotlib.axes.Axes.annotate` for the label,
             e.g. ``ha``, ``fontsize`` or ``color``.
         **kwargs: Forwarded to :class:`~matplotlib.patches.FancyArrowPatch`, e.g.
-            ``connectionstyle="arc3,rad=0.2"`` for a curved arrow or ``gid``.
+            ``connectionstyle="arc3,rad=0.2"`` for a curved arrow, ``gid``, or
+            ``joinstyle="round"`` and ``capstyle="round"`` for a softer line arrow
+            (mitred and butt by default).
 
     Returns:
-        The arrow patch.
+        The patch of the arrow's last segment, which carries the head.
+
+    Raises:
+        ValueError: If ``style`` is neither ``"filled"`` nor ``"line"``.
     """
-    hw = max(3.0, 2.4 * width) if head_width is None else head_width
-    hl = max(2.6, 1.5 * width) if head_length is None else head_length
+    if style not in ("filled", "line"):
+        raise ValueError(f"style must be 'filled' or 'line', got {style!r}")
     color = mpl.rcParams["text.color"] if color is None else color
+    if via is not None and len(via):
+        corners = [tail, *(tuple(p) for p in via)]
+        xs, ys = zip(*corners, strict=True)
+        ax.plot(
+            xs,
+            ys,
+            color=color,
+            linewidth=width,
+            linestyle=linestyle,
+            solid_capstyle="butt",
+            solid_joinstyle="miter",
+            zorder=zorder,
+        )
+        tail = corners[-1]
+    if style == "filled":
+        hw = max(3.0, 2.4 * width) if head_width is None else head_width
+        hl = max(2.6, 1.5 * width) if head_length is None else head_length
+        arrowstyle = ArrowStyle.Simple(head_length=hl, head_width=hw, tail_width=width)
+        line_kw: dict[str, Any] = {"linewidth": 0.0}
+    else:
+        hl = max(2.4, 3.0 * width) if head_length is None else head_length
+        hw = hl if head_width is None else head_width
+        # Matplotlib's "-|>" head width is measured from the shaft to one side.
+        arrowstyle = ArrowStyle("-|>", head_length=hl, head_width=hw / 2)
+        line_kw = {
+            "linewidth": width,
+            "linestyle": linestyle,
+            "joinstyle": "miter",
+            "capstyle": "butt",
+        }
     patch = FancyArrowPatch(
         tail,
         head,
-        arrowstyle=ArrowStyle.Simple(head_length=hl, head_width=hw, tail_width=width),
+        arrowstyle=arrowstyle,
         mutation_scale=1.0,
         shrinkA=0.0,
         shrinkB=0.0,
         color=color,
-        linewidth=0.0,
         zorder=zorder,
-        **kwargs,
+        **{**line_kw, **kwargs},
     )
     ax.add_patch(patch)
     if label:

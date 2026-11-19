@@ -171,3 +171,105 @@ def test_box_text_reads_on_its_fill():
     dark, light = ax.texts
     assert to_rgba(dark.get_color()) == to_rgba("white")
     assert sum(to_rgba(light.get_color())[:3]) < 0.5
+
+
+def _drawn(arrow) -> np.ndarray:
+    """The arrow's vertices in points, without the closing vertex matplotlib appends."""
+    ax = arrow.axes
+    ax.figure.canvas.draw()
+    path = arrow.get_path()
+    keep = path.codes != path.CLOSEPOLY if path.codes is not None else slice(None)
+    return ax.transData.transform(path.vertices[keep]) * 72.0 / ax.figure.dpi
+
+
+def test_a_line_arrow_tip_sits_on_its_head():
+    """The tip lands on the head point, short of it only by the miter of the stroke."""
+    _, ax = nf.subplots(width=3.0, aspect=1.0)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    arrow = nf.diagram_arrow(ax, (0.1, 0.5), (0.9, 0.5), style="line", width=0.8)
+    head_x = ax.transData.transform((0.9, 0.5))[0] * 72.0 / ax.figure.dpi
+    assert _drawn(arrow)[:, 0].max() == pytest.approx(head_x, abs=2 * 0.8)
+
+
+def test_a_line_arrow_head_is_sized_in_points():
+    """The head keeps its size in points whatever the data range, and grows with head_width."""
+
+    def height(span: float, head_width: float) -> float:
+        _, ax = nf.subplots(width=3.0, aspect=1.0)
+        ax.set_xlim(0, span)
+        ax.set_ylim(0, span)
+        y = _drawn(
+            nf.diagram_arrow(
+                ax, (0.1 * span, 0.5 * span), (0.9 * span, 0.5 * span), style="line", head_width=head_width
+            )
+        )[:, 1]
+        return y.max() - y.min()
+
+    assert height(1.0, 4.0) == pytest.approx(height(100.0, 4.0), rel=1e-6)
+    assert height(1.0, 8.0) > 1.5 * height(1.0, 4.0)
+
+
+def test_an_arrow_through_waypoints_runs_through_each_and_ends_on_the_head():
+    _, ax = nf.subplots(width=3.0, aspect=1.0)
+    ax.set_xlim(-1, 3)
+    ax.set_ylim(-1, 3)
+    arrow = nf.diagram_arrow(ax, (0.0, 0.0), (2.0, 0.0), via=[(0.0, 1.0), (2.0, 1.0)], style="line")
+    (shaft,) = ax.lines
+    np.testing.assert_array_equal(shaft.get_xydata(), [(0.0, 0.0), (0.0, 1.0), (2.0, 1.0)])
+    x, y = ax.transData.inverted().transform(_drawn(arrow) / 72.0 * ax.figure.dpi).T
+    assert y.max() == pytest.approx(1.0, abs=0.04) and y.min() == pytest.approx(0.0, abs=0.04)
+    np.testing.assert_allclose(x, 2.0, atol=0.05)
+
+
+def test_an_unknown_arrow_style_is_refused():
+    _, ax = nf.subplots()
+    with pytest.raises(ValueError, match="style"):
+        nf.diagram_arrow(ax, (0.0, 0.0), (1.0, 0.0), style="dotted")
+
+
+def test_a_box_takes_a_line_style_and_a_hatch():
+    _, ax = nf.subplots()
+    box = nf.diagram_box(ax, (0.5, 0.5), 0.4, 0.2, facecolor="none", linestyle="--", hatch="//")
+    assert box.get_linestyle() == "--" and box.get_hatch() == "//"
+
+
+def test_a_box_without_rounding_is_a_plain_rectangle():
+    """Square corners have no curve segments, so a grid of such boxes tiles cleanly."""
+    _, ax = nf.subplots()
+    box = nf.diagram_box(ax, (0.5, 0.5), 0.4, 0.2, rounding=0)
+    path = box.get_path()
+    assert set(path.codes) <= {path.MOVETO, path.LINETO, path.CLOSEPOLY}
+    corners = path.vertices
+    np.testing.assert_allclose(np.unique(corners[:, 0]), [0.3, 0.7])
+    np.testing.assert_allclose(np.unique(corners[:, 1]), [0.4, 0.6])
+
+
+def test_a_line_arrow_takes_its_join_and_cap_from_the_caller():
+    _, ax = nf.subplots()
+    sharp = nf.diagram_arrow(ax, (0.0, 0.0), (1.0, 0.0), style="line")
+    soft = nf.diagram_arrow(ax, (0.0, 0.0), (1.0, 0.0), style="line", joinstyle="round", capstyle="round")
+    assert (sharp.get_joinstyle(), sharp.get_capstyle()) == ("miter", "butt")
+    assert (soft.get_joinstyle(), soft.get_capstyle()) == ("round", "round")
+
+
+@pytest.mark.parametrize("via", [[], None, np.empty((0, 2))], ids=["empty", "none", "empty-array"])
+def test_an_arrow_without_waypoints_is_one_straight_patch(via):
+    _, ax = nf.subplots()
+    nf.diagram_arrow(ax, (0.0, 0.0), (1.0, 0.0), via=via, style="line")
+    assert len(ax.lines) == 0 and len(ax.patches) == 1
+
+
+def test_an_arrow_takes_its_waypoints_as_an_array():
+    _, ax = nf.subplots()
+    nf.diagram_arrow(ax, (0.0, 0.0), (2.0, 0.0), via=np.array([[0.0, 1.0], [2.0, 1.0]]))
+    (shaft,) = ax.lines
+    np.testing.assert_array_equal(shaft.get_xydata(), [(0.0, 0.0), (0.0, 1.0), (2.0, 1.0)])
+
+
+def test_a_box_by_default_is_solid_rounded_and_unhatched():
+    _, ax = nf.subplots()
+    box = nf.diagram_box(ax, (0.5, 0.5), 0.4, 0.2)
+    path = box.get_path()
+    assert box.get_linestyle() == "-" and box.get_hatch() is None
+    assert path.CURVE3 in set(path.codes) or path.CURVE4 in set(path.codes)
