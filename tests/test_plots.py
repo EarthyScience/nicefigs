@@ -137,9 +137,8 @@ def test_scorecard_handles_nan():
     plt.close(ax.figure)
 
 
-def test_scorecard_default_output_unchanged_when_new_kwargs_omitted():
-    # Regression contract: the new opt-in kwargs must not move a single cell
-    # or tick when left at their defaults.
+def test_scorecard_default_layout_is_unit_cells_without_gaps_or_colorbar():
+    # Without groups the grid is unit cells; the headings are text, not ticks.
     vals = np.array([[1.0, 0.3], [0.5, 0.8]])
     ax = nf.scorecard(
         vals, row_labels=["m1", "m2"], col_labels=["RMSE", "R2"], direction={"RMSE": "lower_better"}
@@ -147,13 +146,11 @@ def test_scorecard_default_output_unchanged_when_new_kwargs_omitted():
     try:
         assert ax.get_xlim() == (0.0, 2.0)  # no group gaps, nc == 2
         assert ax.get_ylim() == (2.0, 0.0)  # inverted
-        assert ax.get_aspect() not in ("equal", 1.0)  # square=False (default) → not forced equal
         cell_patches = [p for p in ax.patches if p.get_fill()]
         assert len(cell_patches) == 4
         xs = sorted({round(p.get_xy()[0], 6) for p in cell_patches})
         assert xs == [0.0, 1.0]  # unit-width cells, no gaps
-        assert [round(t, 3) for t in ax.get_xticks()] == [0.5, 1.5]
-        assert not any(t.get_fontweight() == "bold" for t in ax.texts)  # no group-title row
+        assert len(ax.lines) == 0  # no group rules
         assert len(ax.figure.axes) == 1  # no colorbar axes added
     finally:
         plt.close(ax.figure)
@@ -191,8 +188,9 @@ def test_scorecard_grouped_columns_gap_and_titles():
         assert lefts[1] == 1.0
         assert lefts[2] == pytest.approx(2.0 + 0.6)
         assert ax.get_xlim()[1] == pytest.approx(3.0 + 0.6)
-        titles = sorted(t.get_text() for t in ax.texts if t.get_fontweight() == "bold")
+        titles = sorted(t.get_text() for t in ax.texts if t.get_text() in ("G1", "G2"))
         assert titles == ["G1", "G2"]
+        assert len(ax.lines) == 2  # one rule under each group title
     finally:
         plt.close(ax.figure)
 

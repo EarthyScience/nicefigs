@@ -424,6 +424,36 @@ def scorecard_diverging_cmap(
     return cm, norm
 
 
+def scorecard_skill_cmap(
+    boundaries: list[float] | None = None,
+) -> tuple[mcolors.ListedColormap, mcolors.BoundaryNorm]:
+    """Discrete ``(cmap, norm)`` for *percent better than a baseline*: blue is better, red worse.
+
+    The same bands, colours and edges as :func:`scorecard_diverging_cmap`, reversed so that
+    positive values (better) are blue; the pointed ends are dark red below the first edge
+    and dark blue above the last. This is the default scale of :func:`nicefigs.scorecard`.
+
+    Args:
+        boundaries: 12 band edges (11 bands), most negative first. Defaults to
+            :data:`SCORECARD_DIVERGING_BOUNDARIES`.
+
+    Returns:
+        ``(cmap, norm)`` with under/over colours set, for ``extend="both"``.
+
+    Raises:
+        ValueError: ``boundaries`` does not have 12 edges.
+    """
+    boundaries = list(boundaries) if boundaries is not None else list(SCORECARD_DIVERGING_BOUNDARIES)
+    n = len(_SCORECARD_DIVERGING_COLORS)
+    if len(boundaries) != n + 1:
+        raise ValueError(f"boundaries must have {n + 1} edges for {n} bands, got {len(boundaries)}")
+    cm = mcolors.ListedColormap(_SCORECARD_DIVERGING_COLORS[::-1], name="scorecard_skill").with_extremes(
+        under=_SCORECARD_DIVERGING_OVER, over=_SCORECARD_DIVERGING_UNDER
+    )
+    cm.name = "scorecard_skill"
+    return cm, mcolors.BoundaryNorm(boundaries, cm.N)
+
+
 # --------------------------------------------------------------------------- #
 # Categorical palettes (land-cover products)
 # --------------------------------------------------------------------------- #
