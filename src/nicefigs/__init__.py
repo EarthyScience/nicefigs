@@ -40,7 +40,7 @@ from .diagrams import (
     flux_diagram,
     flux_legend,
 )
-from .figure import TextIssue, check_text_overlaps, figure, figure_size, save, subplots
+from .figure import TextIssue, check_text_overlaps, figure, figure_size, save, subplots, use_agg
 from .hovmoller import hovmoller, hovmoller_panels
 from .images import heatmap, image, image_grid, overlay_grid, pca_rgb
 from .kde import agreement, kde_contours, scatter_regression
@@ -116,6 +116,7 @@ from .style import (
     THEMES,
     Theme,
     get_theme,
+    register_fonts,
     set_theme,
     style,
 )
@@ -168,6 +169,8 @@ __all__ = [
     "subplots",
     "figure_size",
     "save",
+    "use_agg",
+    "register_fonts",
     "check_text_overlaps",
     "TextIssue",
     # panels

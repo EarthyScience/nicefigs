@@ -17,8 +17,10 @@ Example::
 from __future__ import annotations
 
 import contextlib
+import os
 from collections.abc import Iterator
 from dataclasses import dataclass, field, replace
+from pathlib import Path
 from typing import Any
 
 import matplotlib as mpl
@@ -87,6 +89,34 @@ COLORS = {
 # --------------------------------------------------------------------------- #
 
 
+FONT_DIR_ENV = "NICEFIGS_FONT_DIR"
+_FONTS_ADDED: set[str] = set()
+
+
+def register_fonts(directory: str | os.PathLike[str] | None = None) -> list[str]:
+    """Make the fonts of a directory known to matplotlib, so a theme can list their family.
+
+    Opt-in: nothing calls it for you and the themes' fonts are unchanged. Register fonts, then use a
+    theme such as ``Theme(sans_serif=("Fira Sans", "DejaVu Sans"))``.
+
+    Args:
+        directory: Folder of ``.otf``/``.ttf`` files; defaults to ``$NICEFIGS_FONT_DIR`` (none if unset).
+
+    Returns:
+        The font family names now available from that folder (empty if there is none).
+    """
+    from matplotlib import font_manager as fm
+
+    folder = directory if directory is not None else os.environ.get(FONT_DIR_ENV)
+    if not folder:
+        return []
+    for path in sorted(Path(folder).glob("*.[ot]tf")):
+        if str(path) not in _FONTS_ADDED:
+            _FONTS_ADDED.add(str(path))
+            fm.fontManager.addfont(str(path))
+    return sorted({f.name for f in fm.fontManager.ttflist if Path(f.fname).parent == Path(folder)})
+
+
 @dataclass(frozen=True)
 class Theme:
     """A frozen bundle of styling parameters.
@@ -134,7 +164,16 @@ class Theme:
     spine_color: str = "#222222"
 
     font_family: str = "sans-serif"
-    sans_serif: tuple[str, ...] = ("Helvetica", "Arial", "DejaVu Sans", "sans-serif")
+    sans_serif: tuple[str, ...] = (
+        "Helvetica",
+        "Arial",
+        "TeX Gyre Heros",
+        "Nimbus Sans",
+        "Nimbus Sans L",
+        "Liberation Sans",
+        "DejaVu Sans",
+        "sans-serif",
+    )
 
     spines_topright: bool = False
     grid: bool = False
@@ -191,14 +230,21 @@ class Theme:
 
     def rc(self) -> dict[str, Any]:
         """Render this theme as a matplotlib ``rcParams`` dict."""
+        # Text keeps the family list it was created with, so a figure drawn or saved after the theme
+        # context ended uses the same fonts; only installed families are listed (no findfont warnings).
+        from matplotlib import font_manager as fm
+
+        installed = {f.name for f in fm.fontManager.ttflist} | {"sans-serif"}
+        family = [f for f in self.sans_serif if f in installed]
         return {
+            "svg.fonttype": "path",
             "figure.dpi": self.dpi,
             "savefig.dpi": self.savedpi,
             "savefig.bbox": "tight",
             "savefig.pad_inches": 0.015,
             "figure.facecolor": "white",
             "savefig.facecolor": "white",
-            "font.family": self.font_family,
+            "font.family": family if self.font_family == "sans-serif" else self.font_family,
             "font.sans-serif": list(self.sans_serif),
             "font.size": self.fs_body,
             "text.color": self.text_color,

@@ -160,3 +160,42 @@ def test_palettes_are_nonempty_hex_lists():
         assert len(pal) > 0
         for c in pal:
             assert c.startswith("#")
+
+
+def test_rc_keeps_helvetica_first_and_converts_svg_text_to_paths():
+    chain = THEMES["paper-large"].sans_serif
+    assert chain[:2] == ("Helvetica", "Arial")
+    assert chain.index("Liberation Sans") < chain.index("DejaVu Sans")  # a Helvetica look-alike before DejaVu
+    assert THEMES["paper-large"].rc()["svg.fonttype"] == "path"
+
+
+def test_use_agg_keeps_a_chosen_backend_and_picks_agg_otherwise(monkeypatch):
+    import matplotlib as mpl
+
+    calls = []
+    monkeypatch.setattr(mpl, "use", lambda b: calls.append(b))
+    monkeypatch.setattr(mpl.rcParams.__class__, "_get_backend_or_none", lambda self: "tkagg", raising=False)
+    nf.use_agg()
+    assert calls == []
+    monkeypatch.setattr(mpl.rcParams.__class__, "_get_backend_or_none", lambda self: None, raising=False)
+    nf.use_agg()
+    assert calls == ["agg"]
+
+
+def test_save_writes_svg_without_text_elements(tmp_path):
+    fig, ax = nf.subplots(width="half")
+    ax.set_title("hello")
+    (svg,) = nf.save(fig, tmp_path / "f", formats=("svg",))
+    assert "<text" not in svg.read_text()
+
+
+def test_register_fonts_makes_a_folders_family_available_without_changing_themes(tmp_path):
+    import shutil
+
+    import matplotlib.font_manager as fm
+
+    shutil.copy(fm.findfont("DejaVu Sans"), tmp_path / "x.ttf")
+    before = THEMES["paper"].sans_serif
+    assert "DejaVu Sans" in nf.register_fonts(tmp_path)
+    assert nf.register_fonts(tmp_path / "missing") == []
+    assert THEMES["paper"].sans_serif == before
