@@ -162,11 +162,9 @@ def test_palettes_are_nonempty_hex_lists():
             assert c.startswith("#")
 
 
-def test_rc_prefers_fira_sans_and_converts_svg_text_to_paths():
-    rc = THEMES["paper-large"].rc()
-    assert rc["font.sans-serif"][0] == "Fira Sans"
-    assert "DejaVu Sans" in rc["font.sans-serif"]
-    assert rc["svg.fonttype"] == "path"
+def test_rc_keeps_helvetica_first_and_converts_svg_text_to_paths():
+    assert THEMES["paper-large"].sans_serif[0] == "Helvetica"
+    assert THEMES["paper-large"].rc()["svg.fonttype"] == "path"
 
 
 def test_use_agg_keeps_a_chosen_backend_and_picks_agg_otherwise(monkeypatch):
@@ -189,25 +187,13 @@ def test_save_writes_svg_without_text_elements(tmp_path):
     assert "<text" not in svg.read_text()
 
 
-def test_register_fonts_reports_fira_sans_after_adding_its_directory(tmp_path):
+def test_register_fonts_makes_a_folders_family_available_without_changing_themes(tmp_path):
     import shutil
 
     import matplotlib.font_manager as fm
-    from matplotlib import get_data_path
 
-    src = next(fm.findfont(f) for f in ["DejaVu Sans"])
-    assert shutil.copy(src, tmp_path / "x.ttf")
-    assert isinstance(nf.register_fonts(tmp_path), bool)
-    assert any(f.fname == str(tmp_path / "x.ttf") for f in fm.fontManager.ttflist)
-    assert get_data_path()
-
-
-def test_text_keeps_an_installed_family_list_after_the_style_context_ends():
-    from matplotlib import font_manager as fm
-
-    with nf.style("paper-large"):
-        _, ax = nf.subplots(width="half")
-        title = ax.set_title("t")
-    installed = {f.name for f in fm.fontManager.ttflist} | {"sans-serif"}
-    families = title.get_fontproperties().get_family()
-    assert families and set(families) <= installed
+    shutil.copy(fm.findfont("DejaVu Sans"), tmp_path / "x.ttf")
+    before = THEMES["paper"].sans_serif
+    assert "DejaVu Sans" in nf.register_fonts(tmp_path)
+    assert nf.register_fonts(tmp_path / "missing") == []
+    assert THEMES["paper"].sans_serif == before

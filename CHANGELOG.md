@@ -8,9 +8,10 @@ to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- The themes prefer Fira Sans (falling back to Helvetica, Arial, DejaVu Sans) and, when found, use it
-  in mathtext; fonts of `$NICEFIGS_FONT_DIR` or `register_fonts(dir)` are registered. SVG text is
-  written as paths (`svg.fonttype="path"` in every theme and in `save`).
+- `register_fonts(dir)` (default `$NICEFIGS_FONT_DIR`) makes a folder of fonts available to a theme; the themes' fonts
+  are unchanged. SVG text is written as paths (`svg.fonttype="path"` in every theme and in `save`); text
+  keeps the list of installed families it was created with, so a figure saved after its theme context
+  still uses them.
 - `use_agg()`, called by `figure` and `subplots`: selects the Agg backend unless a backend was chosen.
 - `scorecard` draws the PhD-defense-deck look: text is the raw value, colour the percent better
   than a baseline on the fixed 11-band `scorecard_skill_cmap` (blue better, red worse).

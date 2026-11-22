@@ -93,23 +93,28 @@ FONT_DIR_ENV = "NICEFIGS_FONT_DIR"
 _FONTS_ADDED: set[str] = set()
 
 
-def register_fonts(directory: str | os.PathLike[str] | None = None) -> bool:
-    """Make the fonts of a directory known to matplotlib and say whether Fira Sans is available.
+def register_fonts(directory: str | os.PathLike[str] | None = None) -> list[str]:
+    """Make the fonts of a directory known to matplotlib, so a theme can list their family.
+
+    Opt-in: nothing calls it for you and the themes' fonts are unchanged. Register fonts, then use a
+    theme such as ``Theme(sans_serif=("Fira Sans", "DejaVu Sans"))``.
 
     Args:
         directory: Folder of ``.otf``/``.ttf`` files; defaults to ``$NICEFIGS_FONT_DIR`` (none if unset).
 
     Returns:
-        ``True`` if a font family called "Fira Sans" can be used, which the themes prefer.
+        The font family names now available from that folder (empty if there is none).
     """
     from matplotlib import font_manager as fm
 
     folder = directory if directory is not None else os.environ.get(FONT_DIR_ENV)
-    if folder and str(folder) not in _FONTS_ADDED:
-        _FONTS_ADDED.add(str(folder))
-        for path in sorted(Path(folder).glob("*.[ot]tf")):
+    if not folder:
+        return []
+    for path in sorted(Path(folder).glob("*.[ot]tf")):
+        if str(path) not in _FONTS_ADDED:
+            _FONTS_ADDED.add(str(path))
             fm.fontManager.addfont(str(path))
-    return any(f.name == "Fira Sans" for f in fm.fontManager.ttflist)
+    return sorted({f.name for f in fm.fontManager.ttflist if Path(f.fname).parent == Path(folder)})
 
 
 @dataclass(frozen=True)
@@ -159,7 +164,7 @@ class Theme:
     spine_color: str = "#222222"
 
     font_family: str = "sans-serif"
-    sans_serif: tuple[str, ...] = ("Fira Sans", "Helvetica", "Arial", "DejaVu Sans", "sans-serif")
+    sans_serif: tuple[str, ...] = ("Helvetica", "Arial", "DejaVu Sans", "sans-serif")
 
     spines_topright: bool = False
     grid: bool = False
@@ -216,26 +221,13 @@ class Theme:
 
     def rc(self) -> dict[str, Any]:
         """Render this theme as a matplotlib ``rcParams`` dict."""
-        fira = register_fonts() and self.sans_serif[:1] == ("Fira Sans",)
         # Text keeps the family list it was created with, so a figure drawn or saved after the theme
-        # context ended still uses Fira; only installed families are listed (no findfont warnings).
+        # context ended uses the same fonts; only installed families are listed (no findfont warnings).
         from matplotlib import font_manager as fm
 
         installed = {f.name for f in fm.fontManager.ttflist} | {"sans-serif"}
         family = [f for f in self.sans_serif if f in installed]
-        math = (
-            {
-                "mathtext.fontset": "custom",
-                "mathtext.rm": "Fira Sans",
-                "mathtext.it": "Fira Sans:italic",
-                "mathtext.bf": "Fira Sans:bold",
-                "mathtext.cal": "Fira Sans",
-            }
-            if fira
-            else {"mathtext.fontset": "dejavusans"}
-        )
         return {
-            **math,
             "svg.fonttype": "path",
             "figure.dpi": self.dpi,
             "savefig.dpi": self.savedpi,
@@ -284,6 +276,7 @@ class Theme:
             "legend.handletextpad": 0.5,
             "legend.columnspacing": 1.2,
             "legend.borderaxespad": 0.4,
+            "mathtext.fontset": "dejavusans",
             "text.usetex": False,
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
