@@ -1,4 +1,9 @@
-"""Scorecard with the WeatherBench2-inspired diverging colormap, grouped columns, and a colour bar."""
+"""Scorecard coloured by its printed values through an explicit ``norm`` (the colour-by-value path).
+
+The default, baseline-anchored look (text is the raw value, colour the percent better than a
+baseline) is shown in example 34. Pass ``cmap`` and ``norm`` as here when the printed numbers
+are themselves the quantity to colour, e.g. percent differences.
+"""
 
 import numpy as np
 
@@ -33,7 +38,7 @@ def make():
         cell_format="{:+.0f}",
         colorbar=True,
         colorbar_label="RMSE difference vs. Persistence [%]",
-        title="Scorecard vs. Persistence baseline",
+        title="Colour = printed value (explicit norm)",
     )
     return ax.figure
 

@@ -55,7 +55,8 @@ def grouped(
         value_label: y-axis label.
         value_units: Unit appended to ``value_label``.
         baseline: y value of a dashed reference line.
-        legend: Add a legend when there is more than one series.
+        legend: Add a legend when there is more than one series, in a row above the axes
+            (right-aligned, no frame) so that it never covers a bar.
         rotation: Category tick-label rotation (degrees).
         edgecolor: Bar edge colour.
 
@@ -100,7 +101,14 @@ def grouped(
     ax.grid(axis="y", alpha=0.15, linewidth=0.5)
     ax.set_axisbelow(True)
     if legend and nser > 1:
-        ax.legend(loc="best", fontsize=th.fs_legend, ncol=min(nser, 3))
+        ax.legend(
+            loc="lower right",
+            bbox_to_anchor=(1.0, 1.0),
+            borderaxespad=0.2,
+            frameon=False,
+            fontsize=th.fs_legend,
+            ncol=min(nser, 4),
+        )
     return ax
 
 

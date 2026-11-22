@@ -12,13 +12,14 @@ from nicefigs import data
 def make():
     nf.set_theme("paper")
     fig = nf.figure(width="full", aspect=0.3)
+    fig.subplots_adjust(wspace=0.28)
 
     # (a) gridded field (the xarray/zarr case) — pcolormesh
     ax1, ccrs = nf.make_map_axes(fig, (1, 2, 1), projection="robinson")
     lon, lat, z = data.global_grid(res=2.0)
     nf.draw_background(ax1, ccrs)
     ax1.set_extent(nf.maps.ANTARCTICA_CUTOFF_EXTENT, crs=ccrs.PlateCarree())
-    _, m1 = nf.raster_map(lon, lat, z, ccrs=ccrs, cmap="Spectral_r", ax=ax1)
+    _, m1 = nf.raster_map(lon, lat, z, ccrs=ccrs, cmap="RdYlBu_r", ax=ax1)
     nf.colorbar(m1, ax1, label="T [°C]")
     nf.panel_label(ax1, "a", "gridded (pcolormesh)")
 

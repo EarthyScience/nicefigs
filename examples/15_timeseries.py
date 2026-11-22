@@ -19,6 +19,7 @@ def make():
         yunits="degC",
         title="Daily air temperature",
     )
+    ax.set_ylim(top=46)  # headroom above the seasonal peak for the legend
     return ax.figure
 
 

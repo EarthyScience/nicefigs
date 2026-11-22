@@ -7,12 +7,17 @@ from nicefigs import data
 def make():
     nf.set_theme("paper")
     imgs = [data.regional_grid(seed=i)[2] for i in range(6)]
+    lim = max(abs(img).max() for img in imgs)  # signed anomalies: colour limits symmetric about zero
     fig, axes = nf.image_grid(
         imgs,
         nrows=2,
         ncols=3,
-        cmap="Spectral_r",
-        colorbar_label="value",
+        cmap="RdBu_r",
+        vmin=-lim,
+        vmax=lim,
+        panel_aspect=0.62,
+        hspace=0.3,
+        colorbar_label="anomaly [σ]",
         titles=[f"member {i + 1}" for i in range(6)],
     )
     nf.label_panels(axes)

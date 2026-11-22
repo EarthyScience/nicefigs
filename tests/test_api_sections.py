@@ -61,3 +61,39 @@ def test_profile_bands_shade_the_given_range_in_the_profile_colour():
     assert xs.min() == -1.0 and xs.max() == 2.0
     np.testing.assert_allclose(band.get_facecolor()[0], to_rgba("#4477AA", 0.3))
     assert ax.get_legend() is None or "obs" not in [t.get_text() for t in ax.get_legend().get_texts()][1:]
+
+
+def test_field_plots_default_to_the_sequential_colormap_and_diff_to_diverging():
+    h = npd.hovmoller_field()
+    cs = npd.cross_section_field()
+    heat = np.random.default_rng(0).random((3, 4))
+    for diff, name in ((False, "inferno"), (True, "RdBu_r")):
+        ax, m = nf.hovmoller(h["times"], h["lats"], h["value"], diff=diff)
+        assert m.get_cmap().name == name
+        plt.close(ax.figure)
+        ax, m = nf.cross_section(cs["lats"], cs["levels"], cs["value"], diff=diff)
+        assert m.get_cmap().name == name
+        plt.close(ax.figure)
+    fig, axes = nf.cross_section_panels({"v": cs["value"]}, cs["lats"], cs["levels"])
+    assert axes.ravel()[0].collections[0].get_cmap().name == "inferno"
+    plt.close(fig)
+    ax, im = nf.heatmap(heat)
+    assert im.get_cmap().name == "inferno"
+    plt.close(ax.figure)
+
+
+def test_explicit_cmap_is_kept_with_diff():
+    h = npd.hovmoller_field()
+    ax, m = nf.hovmoller(h["times"], h["lats"], h["value"], diff=True, cmap="PuOr")
+    assert m.get_cmap().name == "PuOr"
+    plt.close(ax.figure)
+
+
+def test_cross_section_empty_label_leaves_axis_unlabelled(field):
+    x, y, z = field
+    _, ax = nf.subplots()
+    try:
+        nf.cross_section(x, y, z, ylabel="", ax=ax)
+        assert ax.get_ylabel() == ""
+    finally:
+        plt.close(ax.figure)

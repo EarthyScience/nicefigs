@@ -18,6 +18,8 @@ def make():
         ax=ax,
     )
     nf.set_labels(ax, "predictor", "response")
+    ax.set_xlim(-0.5, 12.5)  # headroom on the right for the size legend
+    ax.set_ylim(top=11.5)  # and on top for the group legend
     return fig
 
 

@@ -302,17 +302,18 @@ both take a plain `ax` so they drop into any layout.
 --8<-- "examples/21_bars.py"
 ```
 
-### 30 — Scorecard, diverging {#scorecard-diverging}
+### 30 — Scorecard, explicit norm {#scorecard-diverging}
 
-[`nicefigs.scorecard`][nicefigs.scorecard]'s opt-in kwargs for a
-WeatherBench2-style skill scorecard: an explicit diverging `norm` (here
+The explicit-norm path of [`nicefigs.scorecard`][nicefigs.scorecard], for when the
+printed numbers are themselves the quantity to colour (the default, baseline-anchored
+look is example 34): an explicit diverging `norm` (here
 [`scorecard_diverging_cmap`][nicefigs.scorecard_diverging_cmap]) colours
 cells by their *actual* percent-difference value anchored at zero instead of
 per-column goodness ranking; `col_groups` clusters columns with a gap and a
 group title; `square=True` forces square cells; `colorbar=True` draws a
 horizontal bar with the colormap's extend triangles.
 
-![Scorecard, diverging](gallery/30_scorecard_diverging.png)
+![Scorecard, explicit norm](gallery/30_scorecard_diverging.png)
 
 ```python
 --8<-- "examples/30_scorecard_diverging.py"

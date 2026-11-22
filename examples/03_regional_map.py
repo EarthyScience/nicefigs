@@ -15,12 +15,12 @@ def make():
         projection="platecarree",
         kind="binned",
         bin_deg=0.15,
-        cmap="Spectral_r",
+        diverging=True,
         inset_hist=False,
         cbar=True,
-        colorbar_label="soil moisture [m³ m⁻³]",
+        colorbar_label="soil-moisture anomaly [σ]",
         borders=True,
-        title="Regional field (Central Europe)",
+        title="Regional anomaly (Central Europe)",
     )
     return fig
 

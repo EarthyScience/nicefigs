@@ -9,8 +9,8 @@ import numpy as np
 
 from .figure import subplots
 from .lines import band
+from .palettes import DEFAULTS, qualitative, robust_limits, symmetric_limits
 from .palettes import cmap as resolve_cmap
-from .palettes import qualitative, robust_limits, symmetric_limits
 from .style import get_theme
 
 if TYPE_CHECKING:
@@ -127,8 +127,10 @@ def profile(
 
     from .units import axis_label
 
-    ax.set_xlabel(axis_label(xlabel, xunits))
-    ax.set_ylabel(axis_label(ylabel, yunits))
+    if xlabel:
+        ax.set_xlabel(axis_label(xlabel, xunits))
+    if ylabel:
+        ax.set_ylabel(axis_label(ylabel, yunits))
     if title:
         ax.set_title(title, fontsize=th.fs_title, loc="left", pad=3)
     if legend and (len(names) > 1 or baselines):
@@ -142,7 +144,7 @@ def cross_section(
     z: ArrayLike,
     *,
     ax: Axes | None = None,
-    cmap: str | Colormap = "Spectral_r",
+    cmap: str | Colormap | None = None,
     vmin: float | None = None,
     vmax: float | None = None,
     norm: Normalize | None = None,
@@ -163,16 +165,16 @@ def cross_section(
         x: Horizontal coordinate of length ``nx`` (e.g. latitude).
         y: Vertical coordinate of length ``ny`` (e.g. pressure).
         z: Field of shape ``(nx, ny)``.
-        cmap: Colormap name or object.
+        cmap: Colormap name or object; ``None`` picks ``RdBu_r`` for ``diff`` and the sequential
+            default (``inferno``) otherwise.
         vmin: Lower colour limit; derived from ``z`` if ``None``.
         vmax: Upper colour limit; derived from ``z`` if ``None``.
         norm: Colour normalisation; overrides ``vmin``/``vmax``.
-        diff: Treat ``z`` as a difference: symmetric limits, and ``RdBu_r`` when
-            ``cmap`` is left at its default.
+        diff: Treat ``z`` as a difference: symmetric limits about zero.
         robust: Derive limits from the 2nd/98th percentiles instead of min/max.
         invert_y: Invert the vertical axis (surface at the bottom for pressure).
-        xlabel: x-axis label.
-        ylabel: y-axis label.
+        xlabel: x-axis label; ``""`` leaves the axis unlabelled.
+        ylabel: y-axis label; ``""`` leaves the axis unlabelled.
         xunits: Units appended to the x-axis label.
         yunits: Units appended to the y-axis label.
         title: Axes title.
@@ -187,8 +189,8 @@ def cross_section(
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
     z = np.asarray(z, dtype=float)
-    if diff and cmap == "Spectral_r":
-        cmap = "RdBu_r"
+    if cmap is None:
+        cmap = "RdBu_r" if diff else DEFAULTS["sequential"]
     if norm is None and (vmin is None or vmax is None):
         if diff:
             lo, hi = symmetric_limits(z)
@@ -213,8 +215,10 @@ def cross_section(
 
     from .units import axis_label
 
-    ax.set_xlabel(axis_label(xlabel, xunits))
-    ax.set_ylabel(axis_label(ylabel, yunits))
+    if xlabel:
+        ax.set_xlabel(axis_label(xlabel, xunits))
+    if ylabel:
+        ax.set_ylabel(axis_label(ylabel, yunits))
     if title:
         ax.set_title(title, fontsize=th.fs_title, loc="left", pad=3)
     return ax, mesh
@@ -226,7 +230,7 @@ def cross_section_panels(
     y: ArrayLike,
     *,
     diff_fields: Collection[str] = (),
-    value_cmap: str | Colormap = "Spectral_r",
+    value_cmap: str | Colormap = DEFAULTS["sequential"],
     diff_cmap: str | Colormap = "RdBu_r",
     value_label: str = "",
     diff_label: str = "",
