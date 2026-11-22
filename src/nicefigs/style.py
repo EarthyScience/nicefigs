@@ -17,8 +17,10 @@ Example::
 from __future__ import annotations
 
 import contextlib
+import os
 from collections.abc import Iterator
 from dataclasses import dataclass, field, replace
+from pathlib import Path
 from typing import Any
 
 import matplotlib as mpl
@@ -87,6 +89,29 @@ COLORS = {
 # --------------------------------------------------------------------------- #
 
 
+FONT_DIR_ENV = "NICEFIGS_FONT_DIR"
+_FONTS_ADDED: set[str] = set()
+
+
+def register_fonts(directory: str | os.PathLike[str] | None = None) -> bool:
+    """Make the fonts of a directory known to matplotlib and say whether Fira Sans is available.
+
+    Args:
+        directory: Folder of ``.otf``/``.ttf`` files; defaults to ``$NICEFIGS_FONT_DIR`` (none if unset).
+
+    Returns:
+        ``True`` if a font family called "Fira Sans" can be used, which the themes prefer.
+    """
+    from matplotlib import font_manager as fm
+
+    folder = directory if directory is not None else os.environ.get(FONT_DIR_ENV)
+    if folder and str(folder) not in _FONTS_ADDED:
+        _FONTS_ADDED.add(str(folder))
+        for path in sorted(Path(folder).glob("*.[ot]tf")):
+            fm.fontManager.addfont(str(path))
+    return any(f.name == "Fira Sans" for f in fm.fontManager.ttflist)
+
+
 @dataclass(frozen=True)
 class Theme:
     """A frozen bundle of styling parameters.
@@ -134,7 +159,7 @@ class Theme:
     spine_color: str = "#222222"
 
     font_family: str = "sans-serif"
-    sans_serif: tuple[str, ...] = ("Helvetica", "Arial", "DejaVu Sans", "sans-serif")
+    sans_serif: tuple[str, ...] = ("Fira Sans", "Helvetica", "Arial", "DejaVu Sans", "sans-serif")
 
     spines_topright: bool = False
     grid: bool = False
@@ -191,7 +216,21 @@ class Theme:
 
     def rc(self) -> dict[str, Any]:
         """Render this theme as a matplotlib ``rcParams`` dict."""
+        fira = register_fonts() and self.sans_serif[:1] == ("Fira Sans",)
+        math = (
+            {
+                "mathtext.fontset": "custom",
+                "mathtext.rm": "Fira Sans",
+                "mathtext.it": "Fira Sans:italic",
+                "mathtext.bf": "Fira Sans:bold",
+                "mathtext.cal": "Fira Sans",
+            }
+            if fira
+            else {"mathtext.fontset": "dejavusans"}
+        )
         return {
+            **math,
+            "svg.fonttype": "path",
             "figure.dpi": self.dpi,
             "savefig.dpi": self.savedpi,
             "savefig.bbox": "tight",
@@ -239,7 +278,6 @@ class Theme:
             "legend.handletextpad": 0.5,
             "legend.columnspacing": 1.2,
             "legend.borderaxespad": 0.4,
-            "mathtext.fontset": "dejavusans",
             "text.usetex": False,
             "pdf.fonttype": 42,
             "ps.fonttype": 42,

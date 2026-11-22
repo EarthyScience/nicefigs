@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.text import Text
@@ -106,6 +107,17 @@ def figure_size(
     return WIDTHS["half"], WIDTHS["half"] * DEFAULT_ASPECT
 
 
+def use_agg() -> None:
+    """Select the Agg backend unless a backend was already chosen (``MPLBACKEND`` or ``matplotlib.use``).
+
+    Building a figure on an interactive backend connects to a window system, which takes tens of
+    seconds over X forwarding; Agg takes under two. A backend the user chose is never overridden.
+    """
+    chosen = getattr(mpl.rcParams, "_get_backend_or_none", lambda: None)()
+    if chosen is None:
+        mpl.use("agg")
+
+
 def figure(
     width: float | str | None = None,
     height: float | None = None,
@@ -129,6 +141,7 @@ def figure(
     """
     size = figure_size(width, height, aspect)
     th = get_theme(theme)
+    use_agg()
     with style(th):
         fig = plt.figure(figsize=size, dpi=th.dpi, **kwargs)
     return fig
@@ -172,6 +185,7 @@ def subplots(
     if gridspec_kw:
         kwargs["gridspec_kw"] = gridspec_kw
     th = get_theme(theme)
+    use_agg()
     with style(th):
         fig, axes = plt.subplots(nrows, ncols, figsize=size, dpi=th.dpi, **kwargs)
     return fig, axes
@@ -207,6 +221,21 @@ def save(
     th = get_theme()
     dpi = dpi or th.savedpi
     paths = []
+    with mpl.rc_context({"svg.fonttype": "path"}):  # SVG text as paths: fonts need not be installed
+        _write(fig, p, formats, dpi, transparent, paths)
+    if close:
+        plt.close(fig)
+    return paths
+
+
+def _write(
+    fig: Figure,
+    p: Path,
+    formats: tuple[str, ...] | None,
+    dpi: int,
+    transparent: bool,
+    paths: list[Path],
+) -> None:
     if formats is None:
         p.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(p, dpi=dpi, bbox_inches="tight", pad_inches=0.02, transparent=transparent)
@@ -218,9 +247,6 @@ def save(
             out = stem.with_suffix(f".{ext.lstrip('.')}")
             fig.savefig(out, dpi=dpi, bbox_inches="tight", pad_inches=0.02, transparent=transparent)
             paths.append(out)
-    if close:
-        plt.close(fig)
-    return paths
 
 
 @dataclass(frozen=True)
