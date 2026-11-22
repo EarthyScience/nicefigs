@@ -163,7 +163,9 @@ def test_palettes_are_nonempty_hex_lists():
 
 
 def test_rc_keeps_helvetica_first_and_converts_svg_text_to_paths():
-    assert THEMES["paper-large"].sans_serif[0] == "Helvetica"
+    chain = THEMES["paper-large"].sans_serif
+    assert chain[:2] == ("Helvetica", "Arial")
+    assert chain.index("Liberation Sans") < chain.index("DejaVu Sans")  # a Helvetica look-alike before DejaVu
     assert THEMES["paper-large"].rc()["svg.fonttype"] == "path"
 
 

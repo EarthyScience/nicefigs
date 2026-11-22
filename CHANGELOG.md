@@ -8,6 +8,7 @@ to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- The font chain reaches metric-compatible Helvetica clones (TeX Gyre Heros, Nimbus Sans, Liberation Sans) before DejaVu Sans.
 - `register_fonts(dir)` (default `$NICEFIGS_FONT_DIR`) makes a folder of fonts available to a theme; the themes' fonts
   are unchanged. SVG text is written as paths (`svg.fonttype="path"` in every theme and in `save`); text
   keeps the list of installed families it was created with, so a figure saved after its theme context

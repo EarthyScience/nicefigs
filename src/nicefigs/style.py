@@ -164,7 +164,16 @@ class Theme:
     spine_color: str = "#222222"
 
     font_family: str = "sans-serif"
-    sans_serif: tuple[str, ...] = ("Helvetica", "Arial", "DejaVu Sans", "sans-serif")
+    sans_serif: tuple[str, ...] = (
+        "Helvetica",
+        "Arial",
+        "TeX Gyre Heros",
+        "Nimbus Sans",
+        "Nimbus Sans L",
+        "Liberation Sans",
+        "DejaVu Sans",
+        "sans-serif",
+    )
 
     spines_topright: bool = False
     grid: bool = False
