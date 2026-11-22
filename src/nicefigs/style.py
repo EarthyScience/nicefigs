@@ -217,6 +217,12 @@ class Theme:
     def rc(self) -> dict[str, Any]:
         """Render this theme as a matplotlib ``rcParams`` dict."""
         fira = register_fonts() and self.sans_serif[:1] == ("Fira Sans",)
+        # Text keeps the family list it was created with, so a figure drawn or saved after the theme
+        # context ended still uses Fira; only installed families are listed (no findfont warnings).
+        from matplotlib import font_manager as fm
+
+        installed = {f.name for f in fm.fontManager.ttflist} | {"sans-serif"}
+        family = [f for f in self.sans_serif if f in installed]
         math = (
             {
                 "mathtext.fontset": "custom",
@@ -237,7 +243,7 @@ class Theme:
             "savefig.pad_inches": 0.015,
             "figure.facecolor": "white",
             "savefig.facecolor": "white",
-            "font.family": self.font_family,
+            "font.family": family if self.font_family == "sans-serif" else self.font_family,
             "font.sans-serif": list(self.sans_serif),
             "font.size": self.fs_body,
             "text.color": self.text_color,

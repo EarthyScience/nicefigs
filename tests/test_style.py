@@ -200,3 +200,14 @@ def test_register_fonts_reports_fira_sans_after_adding_its_directory(tmp_path):
     assert isinstance(nf.register_fonts(tmp_path), bool)
     assert any(f.fname == str(tmp_path / "x.ttf") for f in fm.fontManager.ttflist)
     assert get_data_path()
+
+
+def test_text_keeps_an_installed_family_list_after_the_style_context_ends():
+    from matplotlib import font_manager as fm
+
+    with nf.style("paper-large"):
+        _, ax = nf.subplots(width="half")
+        title = ax.set_title("t")
+    installed = {f.name for f in fm.fontManager.ttflist} | {"sans-serif"}
+    families = title.get_fontproperties().get_family()
+    assert families and set(families) <= installed
