@@ -133,7 +133,8 @@ def pareto(
         frontier_per_group: Draw one colour-matched frontier per ``group``
             instead of one for all points.
         frontier_kwargs: Overrides for the frontier :meth:`~matplotlib.axes.Axes.plot` style.
-        baselines: ``{label: y}`` labelled horizontal reference lines.
+        baselines: ``{label: y}`` horizontal reference lines, labelled at the left edge on a white
+            backing.
         baseline_colors: ``{label: colour}`` for ``baselines``; defaults to greys.
         xlabel: x-axis label.
         ylabel: y-axis label.
@@ -220,14 +221,16 @@ def pareto(
             col = bc.get(label, fallback[i % len(fallback)])
             ax.axhline(val, color=col, linestyle=":", linewidth=0.8, zorder=2)
             ax.text(
-                0.995,
+                0.01,
                 val,
-                f" {label} ({val:.3g})",
+                f"{label} ({val:.3g})",
                 transform=ax.get_yaxis_transform(),
-                ha="right",
+                ha="left",
                 va="bottom",
                 fontsize=th.fs_annot,
                 color=col,
+                bbox={"facecolor": "white", "edgecolor": "none", "alpha": 0.85, "pad": 0.6},
+                zorder=2.5,
             )
 
     from .units import axis_label

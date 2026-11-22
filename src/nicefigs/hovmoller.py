@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from .palettes import DEFAULTS, robust_limits, symmetric_limits
 from .palettes import cmap as resolve_cmap
-from .palettes import robust_limits, symmetric_limits
 from .style import get_theme
 from .units import axis_label
 
@@ -33,7 +33,7 @@ def hovmoller(
     z: ArrayLike,
     *,
     ax: Axes | None = None,
-    cmap: str | Colormap = "Spectral_r",
+    cmap: str | Colormap | None = None,
     vmin: float | None = None,
     vmax: float | None = None,
     norm: Normalize | None = None,
@@ -57,12 +57,12 @@ def hovmoller(
         y: Spatial coordinate of length ``ny``, e.g. latitude.
         z: Field of shape ``(nt, ny)``.
         ax: Axes to draw on; a new figure is created when ``None``.
-        cmap: Colormap name or object.
+        cmap: Colormap name or object; ``None`` picks ``RdBu_r`` for ``diff`` and the sequential
+            default (``inferno``) otherwise.
         vmin: Lower colour limit; derived from ``z`` if ``None``.
         vmax: Upper colour limit; derived from ``z`` if ``None``.
         norm: Colour normalisation; overrides ``vmin``/``vmax``.
-        diff: Treat ``z`` as a difference: symmetric limits, and ``RdBu_r`` when
-            ``cmap`` is left at its default.
+        diff: Treat ``z`` as a difference: symmetric limits about zero.
         robust: Derive limits from the 2nd/98th percentiles instead of min/max.
         colorbar: Draw a colorbar. Defaults to ``True`` when this call creates the
             figure and ``False`` when drawing onto a supplied ``ax``.
@@ -82,8 +82,8 @@ def hovmoller(
     th = get_theme()
     y = np.asarray(y, dtype=float)
     z = np.asarray(z, dtype=float)
-    if diff and cmap == "Spectral_r":
-        cmap = "RdBu_r"
+    if cmap is None:
+        cmap = "RdBu_r" if diff else DEFAULTS["sequential"]
     if norm is None and (vmin is None or vmax is None):
         if diff:
             lo, hi = symmetric_limits(z)
@@ -139,7 +139,7 @@ def hovmoller_panels(
     y: ArrayLike,
     *,
     diff_fields: Collection[str] = (),
-    value_cmap: str | Colormap = "Spectral_r",
+    value_cmap: str | Colormap = DEFAULTS["sequential"],
     diff_cmap: str | Colormap = "RdBu_r",
     value_label: str = "",
     diff_label: str = "",

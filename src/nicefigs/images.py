@@ -11,8 +11,8 @@ from numpy.typing import ArrayLike
 
 from .colorbars import colorbar
 from .figure import subplots
+from .palettes import DEFAULTS, robust_limits
 from .palettes import cmap as resolve_cmap
-from .palettes import robust_limits
 from .style import get_theme
 
 if TYPE_CHECKING:
@@ -247,7 +247,7 @@ def heatmap(
     ax: Axes | None = None,
     row_labels: Sequence[str] | None = None,
     col_labels: Sequence[str] | None = None,
-    cmap: str = "Spectral_r",
+    cmap: str = DEFAULTS["sequential"],
     vmin: float | None = None,
     vmax: float | None = None,
     norm: Normalize | None = None,

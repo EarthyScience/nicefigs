@@ -45,13 +45,18 @@ from nicefigs import data
 
 nf.set_theme("paper")
 images = [data.regional_grid(seed=i)[2] for i in range(6)]
+lim = max(abs(img).max() for img in images)
 fig, axes = nf.image_grid(
     images,
     nrows=2,
     ncols=3,
     width="full",
-    cmap="Spectral_r",
-    colorbar_label="value",
+    cmap="RdBu_r",
+    vmin=-lim,
+    vmax=lim,
+    panel_aspect=0.62,
+    hspace=0.3,
+    colorbar_label="anomaly [σ]",
     titles=[f"member {i + 1}" for i in range(6)],
 )
 nf.label_panels(axes)
@@ -81,6 +86,8 @@ ax, artists = nf.scatter(
     d["x"], d["y"], group=d["group"], size=d["size"], size_label="area [km²]", alpha=0.8
 )
 nf.set_labels(ax, "predictor", "response")
+ax.set_xlim(-0.5, 12.5)
+ax.set_ylim(top=11.5)
 print(sorted(artists))
 ```
 

@@ -11,8 +11,8 @@ from nicefigs import data
 
 def make():
     nf.set_theme("paper")
-    fig = nf.figure(width="full", aspect=0.62)
-    gs = fig.add_gridspec(2, 2, height_ratios=[1.15, 1.0], hspace=0.42, wspace=0.32)
+    fig = nf.figure(width="full", aspect=0.8)
+    gs = fig.add_gridspec(2, 2, height_ratios=[1.5, 1.0], hspace=0.42, wspace=0.32)
 
     # (a) global map spanning the top row
     ax_map, ccrs = nf.make_map_axes(fig, gs[0, :], projection="robinson")

@@ -120,7 +120,7 @@ nf.set_theme("paper")
 
 da = data.global_dataarray()
 lon, lat, field = nf.from_xarray(da)
-fig, ax, mappable = nf.map(da, cmap="Spectral_r", colorbar_label="t2m [°C]")
+fig, ax, mappable = nf.map(da, cmap="RdYlBu_r", colorbar_label="t2m [°C]")
 print(da.dims, field.shape)
 ```
 

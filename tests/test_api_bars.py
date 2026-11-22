@@ -38,3 +38,11 @@ def test_stacked_normalize_keeps_empty_category_at_zero(ax):
     tops = [p.get_y() + p.get_height() for p in ax.patches]
     assert max(tops) == pytest.approx(1.0)
     assert np.isfinite(tops).all()
+
+
+def test_grouped_legend_sits_above_the_axes_not_over_the_bars(ax):
+    nf.grouped_bars(["a", "b"], {"s1": [1.0, 2.0], "s2": [2.0, 3.0]}, ax=ax)
+    leg = ax.get_legend()
+    assert leg is not None
+    ax.figure.canvas.draw()
+    assert leg.get_window_extent().y0 >= ax.get_window_extent().y1 - 1

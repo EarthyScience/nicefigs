@@ -33,6 +33,13 @@ to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- **Behaviour change**: `hovmoller`, `cross_section`, `cross_section_panels` and `heatmap` default to
+  the sequential colormap (`inferno`) instead of `Spectral_r`; `diff=True` still defaults to `RdBu_r`
+  (`cmap=None` in `hovmoller` and `cross_section`), and an explicit `cmap` is now kept with `diff=True`.
+- **Behaviour change**: `grouped_bars` puts its legend in a row above the axes (right-aligned, no frame)
+  instead of `loc="best"`, which could cover bars; `pareto` labels `baselines` at the left edge on a
+  white backing.
+- `cross_section` no longer sets a bare `"[hPa]"` label when `ylabel=""` (likewise `xlabel`).
 - **Behaviour change** of `scorecard` defaults: `highlight_best=False`; with no baseline cells are
   ranked per column on the skill palette (blue best) instead of `RdYlGn`; `reference=` colours by
   percent better (with `uncertainty=` as before, in standard errors, on the same palette); `cmap=None`;

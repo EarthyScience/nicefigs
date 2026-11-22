@@ -11,7 +11,6 @@ def make():
         data.heatmap_matrix(shape=(6, 9)),
         row_labels=[f"model {i + 1}" for i in range(6)],
         col_labels=[f"lead {i + 1}" for i in range(9)],
-        cmap="Spectral_r",
         annotate=True,
         ax=ax,
     )
