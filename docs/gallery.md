@@ -280,9 +280,8 @@ each item, a reference line at the null, and a headline `summary` annotation.
 ### 20 — Scorecard {#scorecard}
 
 [`nicefigs.scorecard`][nicefigs.scorecard] renders a model×metric table as
-coloured cells — normalised independently per column and respecting each
-metric's `direction` (lower/higher better) — with the best model per metric
-outlined.
+coloured cells. With no baseline, cells are ranked independently per column,
+respecting each metric's `direction` (lower/higher better), on the skill palette.
 
 ![Scorecard](gallery/20_scorecard.png)
 
@@ -317,6 +316,21 @@ horizontal bar with the colormap's extend triangles.
 
 ```python
 --8<-- "examples/30_scorecard_diverging.py"
+```
+
+### 34 — Scorecard against a baseline {#scorecard-baseline}
+
+The default look of [`nicefigs.scorecard`][nicefigs.scorecard]: cell text is the
+raw value and colour is the percent better than the baseline row, on the fixed
+11-band scale [`scorecard_skill_cmap`][nicefigs.scorecard_skill_cmap] (blue better,
+red worse). The baseline row is outlined and labelled, cells within the noise floor
+stay grey, columns are grouped under titled rules, and the colourbar carries the
+band edges with pointed ends.
+
+![Scorecard against a baseline](gallery/34_scorecard_baseline.png)
+
+```python
+--8<-- "examples/34_scorecard_baseline.py"
 ```
 
 ## Budgets

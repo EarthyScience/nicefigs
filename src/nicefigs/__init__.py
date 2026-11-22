@@ -75,6 +75,7 @@ from .palettes import (
     role_color,
     role_style,
     scorecard_diverging_cmap,
+    scorecard_skill_cmap,
     symmetric_limits,
 )
 from .panels import (
@@ -182,6 +183,7 @@ __all__ = [
     "robust_limits",
     "symmetric_limits",
     "scorecard_diverging_cmap",
+    "scorecard_skill_cmap",
     "SCORECARD_DIVERGING_BOUNDARIES",
     # role palette
     "ROLES",

@@ -496,9 +496,7 @@ def outline_boxes(
     from matplotlib.patches import Rectangle
 
     for x, y, w, h in boxes:
-        ax.add_patch(
-            Rectangle((x, y), w, h, facecolor="none", edgecolor=color, linewidth=linewidth, zorder=zorder)
-        )
+        ax.add_patch(Rectangle((x, y), w, h, fill=False, edgecolor=color, linewidth=linewidth, zorder=zorder))
 
 
 def facet(

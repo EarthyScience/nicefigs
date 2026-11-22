@@ -304,39 +304,60 @@ value offset beside each.
 
 ## Scorecards
 
-[`scorecard()`][nicefigs.scorecard] renders a model × metric table as
-coloured cells. By default each column is ranked on its own, using each
-metric's `direction` from [`DIRECTIONS`][nicefigs.DIRECTIONS], and the best
-cell per column is outlined.
+[`scorecard()`][nicefigs.scorecard] renders a model × metric table as coloured
+cells. The text of a cell is the raw value; its colour is the percent it is
+better than a baseline, on one fixed 11-band scale
+([`scorecard_skill_cmap()`][nicefigs.scorecard_skill_cmap]): blue is better, red
+worse, light grey within about 1 %. The baseline is a row (`reference_row`), drawn
+grey inside one outline and labelled "(baseline)", or one outlined cell per column
+(`reference_cells`). Missing values print "n/a"; cells whose difference is below
+the noise (`unresolved`) stay grey and print their value in grey. `col_groups` and
+`row_groups` separate groups with a gap, and column groups get a title with a rule.
+The figure is sized from its cells (`cell_in`, 0.42 in by default) with fonts at their
+printed point sizes.
 
 ```python
 import numpy as np
 
 import nicefigs as nf
-from nicefigs import data
 
 nf.set_theme("paper")
-ms = data.model_scores()
-values = np.array(
-    [[np.mean(ms["scores"][m][model]["daily"]) for m in ms["metrics"]] for model in ms["models"]]
+rmse = np.array(
+    [
+        [2.10, 4.56, 6.42, 0.765, 0.908, 1.03],
+        [1.60, 4.78, 6.72, 0.926, 0.694, 0.866],
+        [1.55, 4.53, 6.66, 0.788, 0.693, 0.841],
+    ]
 )
+cols = ["surface SH", "surface NH", "tower", "gradient", "OCO-2", "OCO-3"]
+percent = nf.skill_gap(rmse, rmse[0], direction="lower_better", mode="percent")
 ax = nf.scorecard(
-    values,
-    row_labels=ms["models"],
-    col_labels=ms["metrics"],
-    direction={"RMSE": "lower_better", "Bias": "target", "R$^2$": "higher_better"},
-    col_units={"RMSE": "mm"},
+    rmse,
+    row_labels=["CT2026", "model A", "model B"],
+    col_labels=cols,
+    direction=dict.fromkeys(cols, "lower_better"),
+    reference_row="CT2026",
+    unresolved=np.abs(percent) < 2.0,
+    col_groups=["In situ"] * 3 + ["Gradient"] + ["Column"] * 2,
+    col_units=dict.fromkeys(cols, "ppm"),
+    cell_format="{:#.3g}",
+    colorbar=True,
 )
 ```
 
 ![Scorecard](../assets/guide/plots-scorecard.png)
 
-Bias is ranked by closeness to zero, the default `target`.
+The colours can also come from numbers other than the printed ones: `color_values=`
+takes the percent directly and `text=` the printed entries. `reference=` measures
+against any array, and with `uncertainty=` in standard errors instead of percent.
+Without any baseline, cells are coloured by the rank within their column on a
+continuous version of the palette, using each metric's `direction` from
+[`DIRECTIONS`][nicefigs.DIRECTIONS]; `highlight_best=True` outlines the best cell
+per column.
 
-To colour cells by their value instead, pass a `norm`, for example from
-[`scorecard_diverging_cmap()`][nicefigs.scorecard_diverging_cmap].
-`col_groups` gaps and titles groups of columns, `square=True` forces square
-cells and `colorbar=True` adds a colorbar.
+To colour cells by their printed value instead, pass a `norm`, for example from
+[`scorecard_diverging_cmap()`][nicefigs.scorecard_diverging_cmap], together with its
+`cmap`.
 
 ```python
 import numpy as np
@@ -368,9 +389,10 @@ Negative differences, an improvement over the baseline, are blue; the outline
 marks the lowest value per column.
 
 [`skill_gap()`][nicefigs.skill_gap] computes the signed distance of each value
-from a reference, positive where the value is better. Passing `reference=` to
-`scorecard` colours cells by this gap, so metrics in different units share one
-scale.
+from a reference, positive where the value is better; `mode="percent"` gives the
+percent better than the reference, with an optional `floor` for references near zero.
+Passing `reference=` to `scorecard` colours cells by this gap, so metrics in different
+units share one scale.
 
 ```python
 import nicefigs as nf
