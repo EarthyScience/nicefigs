@@ -8,6 +8,13 @@ to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Concept-figure primitives in `nicefigs.schematic`: `schematic_axes` (a figure of the printed size
+  whose data units are inches), `numbered_disc`, `group_band`, `label_pair`, `grid_cells`,
+  `folder_icon` and the colour helpers `tint`, `shade` and `soft_color`. They draw with the active
+  theme and the `NICE_COLORS` of the house palette, and combine with `diagram_box` and
+  `diagram_arrow`. `NICE_COLORS` is now exported at the top level.
+- `save(..., check_text=True)` runs `check_text_overlaps` first and raises `ValueError` on a problem.
+- Gallery example `35_schematic`.
 - The font chain reaches metric-compatible Helvetica clones (TeX Gyre Heros, Nimbus Sans, Liberation Sans) before DejaVu Sans.
 - `register_fonts(dir)` (default `$NICEFIGS_FONT_DIR`) makes a folder of fonts available to a theme; the themes' fonts
   are unchanged. SVG text is written as paths (`svg.fonttype="path"` in every theme and in `save`); text
