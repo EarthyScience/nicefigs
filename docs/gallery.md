@@ -473,3 +473,19 @@ spot.
 ```python
 --8<-- "examples/31_panel_label_with_title.py"
 ```
+
+### 35 — Concept figure from schematic primitives {#schematic}
+
+[`schematic_axes`][nicefigs.schematic_axes] gives a figure of the printed size whose data units
+are inches, on which [`diagram_box`][nicefigs.diagram_box] and
+[`diagram_arrow`][nicefigs.diagram_arrow] draw the flow, and
+[`numbered_disc`][nicefigs.numbered_disc], [`group_band`][nicefigs.group_band],
+[`label_pair`][nicefigs.label_pair], [`grid_cells`][nicefigs.grid_cells] and
+[`folder_icon`][nicefigs.folder_icon] add the numbering, grouping, labels and glyphs. Colours come
+from the active theme and the `NICE_COLORS`.
+
+![Schematic](gallery/35_schematic.png)
+
+```python
+--8<-- "examples/35_schematic.py"
+```
