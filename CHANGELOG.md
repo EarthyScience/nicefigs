@@ -6,6 +6,38 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- `scorecard` draws the PhD-defense-deck look: text is the raw value, colour the percent better
+  than a baseline on the fixed 11-band `scorecard_skill_cmap` (blue better, red worse).
+  New arguments: `color_values` and `text` (colour numbers apart from printed ones),
+  `reference_row` (outlined, grey, labelled `baseline_suffix`) and `reference_cells` (one outlined
+  cell per column), both also supplying `reference`; `unresolved` (grey cell with grey value),
+  `na_text`, `row_groups` and `row_group_gap`, `group_rule`, `cell_in`, `font_scale` and `floor`.
+- `scorecard_skill_cmap()` returns the reversed `scorecard_diverging_cmap` pair (higher is better).
+- `skill_gap(mode="percent", floor=...)` gives the percent better than the reference.
+- Gallery example `34_scorecard_baseline`.
+
+### Changed
+
+- **Behaviour change** of `scorecard` defaults: `highlight_best=False`; with no baseline cells are
+  ranked per column on the skill palette (blue best) instead of `RdYlGn`; `reference=` colours by
+  percent better (with `uncertainty=` as before, in standard errors, on the same palette); `cmap=None`;
+  `group_gap=0.35` (was 0.6); `na_color="#e8e8e8"`; `colorbar_label=None` gives
+  "% better than the baseline" (pass `""` for none).
+- **Behaviour change**: a new figure is sized from its cells (`cell_in`, 0.42 in) rather than from
+  `width="half"`; `width=` still fixes the figure width and solves the cell size. `square` only
+  acts on a given `ax`.
+- **Behaviour change**: column headings are horizontal and wrapped, units are a grey second line,
+  group titles are regular weight above a 1.6 pt rule, row and column labels are text rather than
+  ticks, and the colourbar is half the grid width with ticks at the band edges and pointed ends.
+- `outline_boxes` draws unfilled rectangles (`fill=False`).
+
+### Notes
+
+- `nicefigs.cmap("RdBu")` returns `RdBu_r` (red high), so `scorecard(reference=..., cmap="RdBu")`
+  colours better cells red. Pass `matplotlib.colormaps["RdBu"]` or use the default scale.
+
 ## [1.2.0] - 2026-11-20
 
 ### Added
