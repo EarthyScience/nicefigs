@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from . import data
 from .animation import animate_maps, render_animation, save_animation, stitch_frames
-from .artists import ARTIST_PALETTES, HOCKNEY_CANYON, NICE, artist_cmap, artist_palette
+from .artists import ARTIST_PALETTES, HOCKNEY_CANYON, NICE, NICE_COLORS, artist_cmap, artist_palette
 from .bars import grouped as grouped_bars
 from .bars import histogram
 from .bars import stacked as stacked_bars
@@ -94,6 +94,17 @@ from .panels import (
 from .pareto import frontier, pareto
 from .ranking import caterpillar
 from .scatter import scatter
+from .schematic import (
+    folder_icon,
+    grid_cells,
+    group_band,
+    label_pair,
+    numbered_disc,
+    schematic_axes,
+    shade,
+    soft_color,
+    tint,
+)
 from .sections import cross_section, cross_section_panels, profile
 from .shapes import polygon_mesh
 from .spectra import spectrum
@@ -200,6 +211,7 @@ __all__ = [
     "ARTIST_PALETTES",
     "HOCKNEY_CANYON",
     "NICE",
+    "NICE_COLORS",
     # colorbars
     "colorbar",
     "inset_histogram_colorbar",
@@ -249,6 +261,16 @@ __all__ = [
     "scorecard",
     "skill_gap",
     "diagram_box",
+    # schematics
+    "schematic_axes",
+    "numbered_disc",
+    "group_band",
+    "label_pair",
+    "grid_cells",
+    "folder_icon",
+    "tint",
+    "shade",
+    "soft_color",
     "diagram_arrow",
     "flux_diagram",
     "flux_legend",

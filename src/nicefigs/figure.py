@@ -199,6 +199,7 @@ def save(
     dpi: int | None = None,
     transparent: bool = False,
     close: bool = False,
+    check_text: bool = False,
 ) -> list[Path]:
     """Save ``fig`` with a tight bounding box, creating parent directories.
 
@@ -209,14 +210,20 @@ def save(
         dpi: Raster resolution; defaults to the active theme's ``savedpi``.
         transparent: Transparent background.
         close: Close the figure after saving.
+        check_text: Run :func:`check_text_overlaps` first and raise if it finds a problem.
 
     Returns:
         The written paths, one per format, in the order of ``formats``.
+
+    Raises:
+        ValueError: ``check_text`` is set and some text overlaps another or leaves the figure.
 
     Example::
 
         nf.save(fig, "figures/fig01", formats=("pdf", "png"))
     """
+    if check_text and (issues := check_text_overlaps(fig)):
+        raise ValueError(f"text layout problems: {issues}")
     p = Path(path)
     th = get_theme()
     dpi = dpi or th.savedpi

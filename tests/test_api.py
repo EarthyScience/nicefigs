@@ -31,6 +31,7 @@ def test_callables_are_callable():
         "PALETTE_MUTED",
         "PALETTE_HIGH_CONTRAST",
         "CATEGORICAL",
+        "NICE_COLORS",
         "DEFAULTS",
         "TERNARY_PALETTES",
         "METRIC_NAMES",
