@@ -388,6 +388,7 @@ def scorecard(
     s = font_scale
     heads_raw = [str(c) for c in col_labels]
     units = [prettify_unit((col_units or {}).get(c)) for c in col_labels]
+    unit_lines = max((u.count("\n") + 1 for u in units if u), default=0)
     barlabel = colorbar_label
     if barlabel is None:
         barlabel = (
@@ -411,7 +412,7 @@ def scorecard(
 
         def _plan(cell: float):
             heads = [wrap_heading(h, FS_HEAD * s, cell * 72.0 * 1.04) for h in heads_raw]
-            hh = header_heights(heads, any(units), col_groups is not None, s)
+            hh = header_heights(heads, unit_lines, col_groups is not None, s)
             top_in = (hh["top"] + 4.0 * s) / 72.0 + (th.fs_title * 1.6 / 72.0 if title else 0.0)
             grid_w, grid_h = total_w * cell, total_h * cell
             extra = max(0.0, 0.5 * (cbar_w - grid_w)) + 0.06
@@ -437,7 +438,7 @@ def scorecard(
         box = ax.get_position()
         cell_pt = max(fig.get_figwidth() * box.width * 72.0 / total_w, 1.0)
         heads = [wrap_heading(h, FS_HEAD * s, cell_pt * 1.04) for h in heads_raw]
-        hh = header_heights(heads, any(units), col_groups is not None, s)
+        hh = header_heights(heads, unit_lines, col_groups is not None, s)
 
     ax.set_xlim(0, total_w)
     ax.set_ylim(total_h, 0)

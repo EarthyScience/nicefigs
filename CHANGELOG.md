@@ -53,6 +53,11 @@ to [Semantic Versioning](https://semver.org/).
   ticks, and the colourbar is half the grid width with ticks at the band edges and pointed ends.
 - `outline_boxes` draws unfilled rectangles (`fill=False`).
 
+### Fixed
+
+- `scorecard` reserves room for every line of a column unit, so a unit with a second line (an
+  uncertainty, say) no longer overlaps the heading above it.
+
 ### Notes
 
 - `nicefigs.cmap("RdBu")` returns `RdBu_r` (red high), so `scorecard(reference=..., cmap="RdBu")`
