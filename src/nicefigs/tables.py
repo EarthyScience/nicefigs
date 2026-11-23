@@ -12,6 +12,7 @@ import numpy as np
 from ._scorecard import (
     FS_CBAR,
     FS_CBAR_TICK,
+    FS_GROUP,
     FS_HEAD,
     FS_ROW,
     FS_UNIT,
@@ -20,6 +21,8 @@ from ._scorecard import (
     draw_colorbar,
     draw_header,
     fit_headings,
+    fit_labels,
+    group_blocks,
     header_heights,
     text_width_pt,
 )
@@ -389,8 +392,28 @@ def scorecard(
 
     s = font_scale
     heads_raw = [str(c) for c in col_labels]
-    units = [prettify_unit((col_units or {}).get(c)) for c in col_labels]
-    unit_lines = max((u.count("\n") + 1 for u in units if u), default=0)
+    units_raw = [prettify_unit((col_units or {}).get(c)) for c in col_labels]
+    blocks = group_blocks(col_groups, lefts) if col_groups is not None else []
+
+    def _fit_header(cell_pt: float):
+        """Headings, units and group titles wrapped and sized to clear their neighbours, and their heights."""
+        fh, heads = fit_headings(heads_raw, lefts, cell_pt, FS_HEAD * s, FS_UNIT * s)
+        fu, units = fit_labels(units_raw, [(x, x + 1.0) for x in lefts], cell_pt, FS_UNIT * s, 4.5 * s)
+        fg, titles = fit_labels(
+            [b[0] for b in blocks], [b[1:] for b in blocks], cell_pt, FS_GROUP * s, FS_UNIT * s
+        )
+        hh = header_heights(
+            heads,
+            max((u.count("\n") + 1 for u in units if u), default=0),
+            col_groups is not None,
+            s,
+            fh,
+            unit_size=fu,
+            group_lines=max((t.count("\n") + 1 for t in titles), default=1),
+            group_size=fg,
+        )
+        return fh, heads, fu, units, fg, titles, hh
+
     barlabel = colorbar_label
     if barlabel is None:
         barlabel = (
@@ -413,22 +436,22 @@ def scorecard(
             cbar_w = 2.7
 
         def _plan(cell: float):
-            fh, heads = fit_headings(heads_raw, lefts, cell * 72.0, FS_HEAD * s, FS_UNIT * s)
-            hh = header_heights(heads, unit_lines, col_groups is not None, s, fh)
+            header = _fit_header(cell * 72.0)
+            hh = header[-1]
             top_in = (hh["top"] + 4.0 * s) / 72.0 + (th.fs_title * 1.6 / 72.0 if title else 0.0)
             grid_w, grid_h = total_w * cell, total_h * cell
             extra = max(0.0, 0.5 * (cbar_w - grid_w)) + 0.06
             l_in, r_in = max(left_in, extra), max(right_in, extra)
             bottom_in = (0.22 + 0.11 + (FS_CBAR_TICK + FS_CBAR) * s * 1.4 / 72.0 + 0.1) if colorbar else 0.08
-            return fh, heads, hh, grid_w, grid_h, l_in, r_in, top_in, bottom_in
+            return header, grid_w, grid_h, l_in, r_in, top_in, bottom_in
 
         if width is not None:
             w_in = figure_size(width)[0]
             cell_for_wrap = _DEFAULT_CELL_IN
             for _ in range(3):  # wrapping depends on the cell, the margins on the wrapping
-                _, _, _, _, _, l_in, r_in, _, _ = _plan(cell_for_wrap)
+                _, _, _, l_in, r_in, _, _ = _plan(cell_for_wrap)
                 cell_for_wrap = max((w_in - l_in - r_in) / total_w, 0.05)
-        fh, heads, hh, grid_w, grid_h, l_in, r_in, top_in, bottom_in = _plan(cell_for_wrap)
+        header, grid_w, grid_h, l_in, r_in, top_in, bottom_in = _plan(cell_for_wrap)
         fig_w, fig_h = l_in + grid_w + r_in, top_in + grid_h + bottom_in
         fig = figure(width=fig_w, height=fig_h)
         ax = fig.add_axes([l_in / fig_w, bottom_in / fig_h, grid_w / fig_w, grid_h / fig_h])
@@ -439,8 +462,8 @@ def scorecard(
         fig = ax.figure
         box = ax.get_position()
         cell_pt = max(fig.get_figwidth() * box.width * 72.0 / total_w, 1.0)
-        fh, heads = fit_headings(heads_raw, lefts, cell_pt, FS_HEAD * s, FS_UNIT * s)
-        hh = header_heights(heads, unit_lines, col_groups is not None, s, fh)
+        header = _fit_header(cell_pt)
+    fh, heads, fu, units, fg, titles, hh = header
 
     ax.set_xlim(0, total_w)
     ax.set_ylim(total_h, 0)
@@ -528,7 +551,19 @@ def scorecard(
         )
 
     draw_header(
-        ax, lefts, heads, units, col_groups, hh, group_rule=group_rule, cell_pt=cell_pt, scale=s, head_size=fh
+        ax,
+        lefts,
+        heads,
+        units,
+        col_groups,
+        hh,
+        group_rule=group_rule,
+        cell_pt=cell_pt,
+        scale=s,
+        head_size=fh,
+        unit_size=fu,
+        group_titles=titles,
+        group_size=fg,
     )
 
     if title:

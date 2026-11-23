@@ -311,6 +311,25 @@ def test_a_unit_on_two_lines_keeps_clear_of_its_heading():
     assert nf.check_text_overlaps(ax.figure) == []
 
 
+def test_group_titles_over_single_columns_shrink_and_wrap_until_neighbours_clear():
+    groups = ["CATRINE D8.1", "dispersion"] * 3
+    ax = _card([[1.0] * 6, [1.1] * 6], col_groups=groups)
+    titles = [t for t in ax.texts if t.get_text().replace("\n", " ") in set(groups)]
+    assert len(titles) == 6
+    assert nf.check_text_overlaps(ax.figure) == []
+    roomy = _card([[1.0] * 4, [1.1] * 4], col_groups=["In situ"] * 4)
+    assert [t.get_fontsize() for t in roomy.texts if t.get_text() == "In situ"] == [9.5]
+
+
+def test_a_long_unit_under_adjacent_columns_wraps_clear_of_its_neighbours():
+    unit = "Bq m⁻³ (STP)"
+    ax = _card(
+        [[1.0, 2.0, 3.0], [1.1, 2.1, 3.1]], col_units=dict.fromkeys(["c0", "c1", "c2"], unit), cell_in=0.36
+    )
+    assert len([t for t in ax.texts if t.get_text().replace("\n", " ") == unit]) == 3
+    assert nf.check_text_overlaps(ax.figure) == []
+
+
 def test_the_baseline_example_renders_without_text_problems_and_has_the_deck_look():
     path = Path(__file__).parent.parent / "examples" / "34_scorecard_baseline.py"
     spec = importlib.util.spec_from_file_location("ex34", path)
