@@ -59,6 +59,36 @@ def wrap_heading(label: str, size: float, width_pt: float) -> str:
     return "\n".join(lines)
 
 
+def fit_labels(
+    labels: Sequence[str],
+    spans: Sequence[tuple[float, float]],
+    cell_pt: float,
+    size: float,
+    floor: float,
+    clearance_pt: float = 2.0,
+) -> tuple[float, list[str]]:
+    """The largest size, from ``size`` down to ``floor``, at which neighbouring labels clear.
+
+    Each label is centred on its span (``(start, end)`` in cells) and wrapped to the span's width
+    first; a word wider than the span cannot wrap, so the size shrinks in 0.1 pt steps until every
+    pair of neighbouring labels is ``clearance_pt`` apart. Empty labels take no room.
+
+    Returns:
+        The size in points and the wrapped labels at that size (at ``floor`` if none clears).
+    """
+    centres = np.array([0.5 * (a + b) for a, b in spans], dtype=float)
+    widths = [b - a for a, b in spans]
+    steps = max(int(round((size - floor) / 0.1)), 0)
+    for k in range(steps + 1):
+        f = size - 0.1 * k
+        wrapped = [wrap_heading(lab, f, w * cell_pt * 1.04) for lab, w in zip(labels, widths)]
+        half = [0.5 * max(text_width_pt(line, f) for line in h.split("\n")) for h in wrapped]
+        pitch = np.diff(centres) * cell_pt
+        if all(p - half[j] - half[j + 1] >= clearance_pt for j, p in enumerate(pitch)):
+            return f, wrapped
+    return floor, wrapped
+
+
 def fit_headings(
     labels: Sequence[str],
     lefts: np.ndarray,
@@ -67,33 +97,41 @@ def fit_headings(
     floor: float,
     clearance_pt: float = 2.0,
 ) -> tuple[float, list[str]]:
-    """The largest heading size, from ``size`` down to ``floor``, at which neighbouring headings clear.
+    """:func:`fit_labels` for one label per cell starting at ``lefts``."""
+    return fit_labels(labels, [(x, x + 1.0) for x in lefts], cell_pt, size, floor, clearance_pt)
 
-    Each label is wrapped to its cell first; a word wider than the cell cannot wrap, so the size
-    shrinks in 0.1 pt steps until every pair of neighbouring headings is ``clearance_pt`` apart.
 
-    Returns:
-        The size in points and the wrapped headings at that size (at ``floor`` if none clears).
-    """
-    steps = max(int(round((size - floor) / 0.1)), 0)
-    for k in range(steps + 1):
-        f = size - 0.1 * k
-        heads = [wrap_heading(h, f, cell_pt * 1.04) for h in labels]
-        half = [0.5 * max(text_width_pt(line, f) for line in h.split("\n")) for h in heads]
-        pitch = np.diff(np.asarray(lefts, dtype=float)) * cell_pt
-        if all(p - half[j] - half[j + 1] >= clearance_pt for j, p in enumerate(pitch)):
-            return f, heads
-    return floor, heads
+def group_blocks(groups: Sequence[str], lefts: np.ndarray) -> list[tuple[str, float, float]]:
+    """``(name, start, end)`` of each run of equal consecutive group names, in cells."""
+    blocks = []
+    j = 0
+    while j < len(groups):
+        k = j
+        while k + 1 < len(groups) and groups[k + 1] == groups[j]:
+            k += 1
+        blocks.append((groups[j], float(lefts[j]), float(lefts[k] + 1)))
+        j = k + 1
+    return blocks
 
 
 def header_heights(
-    headings: Sequence[str], unit_lines: int, has_groups: bool, scale: float, head_size: float | None = None
+    headings: Sequence[str],
+    unit_lines: int,
+    has_groups: bool,
+    scale: float,
+    head_size: float | None = None,
+    *,
+    unit_size: float | None = None,
+    group_lines: int = 1,
+    group_size: float | None = None,
 ) -> dict[str, float]:
     """Vertical positions (pt above the top of the grid) of the stacked header elements.
 
     ``unit_lines`` is the most lines any column's unit spans (0 without units), so a unit with a
-    second line, such as an uncertainty, keeps clear of the heading above it. ``head_size`` is the
-    heading size in points (default ``FS_HEAD * scale``).
+    second line, such as an uncertainty, keeps clear of the heading above it. ``head_size``,
+    ``unit_size`` and ``group_size`` are the sizes in points of headings, units and group titles
+    (default ``FS_HEAD``, ``FS_UNIT`` and ``FS_GROUP`` times ``scale``); ``group_lines`` is the most
+    lines a group title spans.
 
     Returns:
         ``units`` and ``heading`` (bottoms of those texts), ``rule`` and ``group`` (the group rule
@@ -101,14 +139,16 @@ def header_heights(
     """
     n_lines = max((h.count("\n") + 1 for h in headings), default=1)
     head_size = FS_HEAD * scale if head_size is None else head_size
+    unit_size = FS_UNIT * scale if unit_size is None else unit_size
+    group_size = FS_GROUP * scale if group_size is None else group_size
     units = 3.0 * scale
-    heading = units + (unit_lines * FS_UNIT * _LINE * scale + 1.0 * scale if unit_lines else 0.0)
+    heading = units + (unit_lines * unit_size * _LINE + 1.0 * scale if unit_lines else 0.0)
     top = heading + n_lines * head_size * _LINE * 0.95 + 1.0 * scale
     rule = group = top
     if has_groups:
         rule = top + 3.0 * scale
         group = rule + 2.5 * scale
-        top = group + FS_GROUP * _LINE * scale
+        top = group + group_lines * group_size * _LINE
     return {"units": units, "heading": heading, "rule": rule, "group": group, "top": top}
 
 
@@ -124,9 +164,18 @@ def draw_header(
     cell_pt: float,
     scale: float,
     head_size: float | None = None,
+    unit_size: float | None = None,
+    group_titles: Sequence[str] | None = None,
+    group_size: float | None = None,
 ) -> None:
-    """Draw column headings (at ``head_size`` pt, default ``FS_HEAD * scale``), units, group titles and rules."""
+    """Draw column headings, units, group titles and rules.
+
+    Sizes default to ``FS_HEAD``, ``FS_UNIT`` and ``FS_GROUP`` times ``scale``; ``group_titles``
+    holds one (wrapped) title per run of equal ``groups``, the names themselves by default.
+    """
     head_size = FS_HEAD * scale if head_size is None else head_size
+    unit_size = FS_UNIT * scale if unit_size is None else unit_size
+    group_size = FS_GROUP * scale if group_size is None else group_size
     for x, head, unit in zip(lefts, headings, units):
         if unit:
             ax.annotate(
@@ -136,7 +185,7 @@ def draw_header(
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
-                fontsize=FS_UNIT * scale,
+                fontsize=unit_size,
                 color=MUTED,
                 annotation_clip=False,
             )
@@ -155,24 +204,22 @@ def draw_header(
     if groups is None:
         return
     shift = ScaledTranslation(0, heights["rule"] / 72.0, ax.figure.dpi_scale_trans)
-    j = 0
-    while j < len(groups):
-        k = j
-        while k + 1 < len(groups) and groups[k + 1] == groups[j]:
-            k += 1
-        centre = 0.5 * (lefts[j] + lefts[k] + 1)
-        half = max(
-            0.5 * (lefts[k] + 1 - lefts[j]) - 0.04, 0.5 * text_width_pt(groups[j], FS_GROUP * scale) / cell_pt
-        )
+    blocks = group_blocks(groups, lefts)
+    titles = [name for name, _, _ in blocks] if group_titles is None else list(group_titles)
+    for (_, start, end), title in zip(blocks, titles):
+        centre = 0.5 * (start + end)
+        title_w = max(text_width_pt(line, group_size) for line in title.split("\n"))
+        half = max(0.5 * (end - start) - 0.04, 0.5 * title_w / cell_pt)
         ax.annotate(
-            groups[j],
+            title,
             (centre, 0),
             xytext=(0, heights["group"]),
             textcoords="offset points",
             ha="center",
             va="bottom",
-            fontsize=FS_GROUP * scale,
+            fontsize=group_size,
             color=INK,
+            linespacing=0.95,
             annotation_clip=False,
         )
         if group_rule:
@@ -187,7 +234,6 @@ def draw_header(
                     clip_on=False,
                 )
             )
-        j = k + 1
 
 
 def draw_colorbar(

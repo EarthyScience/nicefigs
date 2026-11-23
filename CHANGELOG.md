@@ -66,6 +66,9 @@ to [Semantic Versioning](https://semver.org/).
 
 - `scorecard` reserves room for every line of a column unit, so a unit with a second line (an
   uncertainty, say) no longer overlaps the heading above it.
+- `scorecard` fits column-group titles and units to their own span, as it already did headings:
+  each wraps at spaces and shrinks until its neighbours clear, so single-column groups with long
+  titles and long units under adjacent columns no longer overprint each other.
 
 ### Notes
 
