@@ -8,6 +8,12 @@ to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Maps work offline: the Natural Earth 110m and 50m coastline, land, ocean and land-border shapefiles
+  are bundled and used before cartopy would download them, never overriding `cartopy.config`.
+  `cache_natural_earth(path=None)` (also `python -m nicefigs.naturalearth`) pre-downloads every layer
+  including 10m; `$NICEFIGS_NATURAL_EARTH_DIR` names the folder searched and written.
+- `hatch_region(..., style="dots")` stipples without a hatch outline; `hatch` defaults per style and
+  `edgecolor="none"` draws no outline. Gallery example `36_stippled_difference_map`.
 - Concept-figure primitives in `nicefigs.schematic`: `schematic_axes` (a figure of the printed size
   whose data units are inches), `numbered_disc`, `group_band`, `label_pair`, `grid_cells`,
   `folder_icon` and the colour helpers `tint`, `shade` and `soft_color`. They draw with the active

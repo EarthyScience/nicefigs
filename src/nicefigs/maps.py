@@ -53,6 +53,9 @@ def _try_cartopy() -> ModuleType | None:
     try:
         import cartopy.crs as ccrs
 
+        from .naturalearth import use_offline_natural_earth
+
+        use_offline_natural_earth()
         return ccrs
     except ImportError:
         return None
@@ -150,6 +153,10 @@ def draw_background(
         return
     import cartopy.feature as cfeature
 
+    from .naturalearth import use_offline_natural_earth
+
+    use_offline_natural_earth()
+
     def _rasterize(artist: Any) -> None:
         if artist is not None and hasattr(artist, "set_rasterized"):
             artist.set_rasterized(True)
@@ -209,6 +216,9 @@ def _land_mask(nx: int, ny: int, bin_deg: float, resolution: str) -> np.ndarray 
         from shapely.prepared import prep
     except ImportError:
         return None
+    from .naturalearth import use_offline_natural_earth
+
+    use_offline_natural_earth()
     shp = natural_earth(resolution=resolution, category="physical", name="land")
     land = prep(unary_union(list(Reader(shp).geometries())))
     lon_c = -180.0 + bin_deg * (np.arange(nx) + 0.5)
@@ -278,6 +288,9 @@ def _bin_values(
     return lon_edges, lat_edges, np.ma.masked_invalid(grid)
 
 
+_HATCH_STYLES = {"hatch": "////", "dots": "..."}
+
+
 def hatch_region(
     ax: Axes,
     lon: ArrayLike,
@@ -285,32 +298,42 @@ def hatch_region(
     mask: ArrayLike,
     *,
     ccrs: ModuleType | None = None,
-    hatch: str = "////",
+    style: str = "hatch",
+    hatch: str | None = None,
     edgecolor: str = "#333333",
     linewidth: float = 0.5,
     bin_deg: float = 2.0,
     threshold: float = 0.5,
 ) -> QuadContourSet:
-    """Hatch the region where a per-point mask is set, leaving the colours beneath visible.
+    """Hatch or stipple the region where a per-point mask is set, leaving the colours beneath visible.
 
     The mask is bin-averaged onto a ``bin_deg`` grid and cells at or above
-    ``threshold`` are hatched without fill.
+    ``threshold`` are marked without fill. ``style="dots"`` gives significance
+    stippling: dots only, with no line along the region's outline.
 
     Args:
         ax: Map axes.
         lon: Point longitudes in degrees east.
         lat: Point latitudes in degrees north.
         mask: Per-point boolean or fraction, same shape as ``lon``.
-        ccrs: The ``cartopy.crs`` module when ``ax`` is projected, else ``None``.
-        hatch: Matplotlib hatch pattern.
-        edgecolor: Hatch colour.
-        linewidth: Hatch line width in points.
+        ccrs: The ``cartopy.crs`` module; detected from ``ax`` if ``None``.
+        style: ``"hatch"`` (diagonal lines, outlined) or ``"dots"`` (dots, never outlined).
+        hatch: Matplotlib hatch pattern; defaults to ``"////"`` for ``"hatch"`` and ``"..."``
+            for ``"dots"``.
+        edgecolor: Colour of the hatch marks. ``"none"`` draws no outline and takes the mark
+            colour from ``rcParams["hatch.color"]``.
+        linewidth: Hatch line and outline width in points.
         bin_deg: Grid cell size in degrees.
         threshold: Minimum cell-mean mask value that is hatched.
 
     Returns:
         The contour set drawing the hatch.
     """
+    if style not in _HATCH_STYLES:
+        raise ValueError(f"style must be one of {sorted(_HATCH_STYLES)}, got {style!r}")
+    if hatch is None:
+        hatch = _HATCH_STYLES[style]
+    outline = style == "hatch" and edgecolor != "none"
     lon = np.asarray(lon, dtype=float)
     lat = np.asarray(lat, dtype=float)
     m = np.asarray(mask, dtype=float)
@@ -318,15 +341,20 @@ def hatch_region(
     lon_c = 0.5 * (lon_e[:-1] + lon_e[1:])
     lat_c = 0.5 * (lat_e[:-1] + lat_e[1:])
     filled = np.ma.filled(grid, 0.0)
+    if ccrs is None and hasattr(ax, "projection"):
+        ccrs = _try_cartopy()
     kw = {}
     if ccrs is not None:
         kw["transform"] = ccrs.PlateCarree()
-    cs = ax.contourf(lon_c, lat_c, filled, levels=[threshold, 1e9], colors="none", hatches=[hatch], **kw)
+    # Without an outline matplotlib colours hatch marks from rcParams, read at creation.
+    rc = {} if edgecolor == "none" else {"hatch.color": edgecolor}
+    with plt.rc_context(rc):
+        cs = ax.contourf(lon_c, lat_c, filled, levels=[threshold, 1e9], colors="none", hatches=[hatch], **kw)
     # matplotlib < 3.8 exposes per-level ``.collections``; later the ContourSet is the collection.
     targets = getattr(cs, "collections", None) or [cs]
     for coll in targets:
-        coll.set_edgecolor(edgecolor)
-        coll.set_linewidth(linewidth)
+        coll.set_edgecolor(edgecolor if outline else "none")
+        coll.set_linewidth(linewidth if outline else 0.0)
     return cs
 
 

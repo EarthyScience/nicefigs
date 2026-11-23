@@ -245,6 +245,56 @@ nf.inset_histogram_colorbar(ax, values, cmap="inferno", bounds=(0.08, 0.55, 0.4,
 
 ![Inset histogram colorbar](../assets/guide/maps-inset-hist.png)
 
+## Stippling significance
+
+[`hatch_region()`][nicefigs.hatch_region] marks the cells where a mask is set and leaves the
+colours beneath visible. `style="hatch"` (default) draws diagonal lines with an outline;
+`style="dots"` draws dots only, with no line along the region's edge, the usual way to
+show where a difference is significant. `edgecolor` colours the marks and `hatch` overrides
+the pattern:
+
+```python
+import numpy as np
+
+import nicefigs as nf
+from nicefigs import data
+
+nf.set_theme("paper")
+
+extent = (-12, 40, 34, 60)
+lon, lat, diff = data.regional_grid(res=0.25, extent=extent)
+fig, ax, _ = nf.map(
+    lon, lat, diff, extent=extent, projection="platecarree",
+    diverging=True, inset_hist=False, cbar=True, borders=True,
+    colorbar_label="model difference [K]",
+)
+nf.hatch_region(
+    ax, lon.ravel(), lat.ravel(), (np.abs(diff) > 0.12).ravel(),
+    style="dots", bin_deg=0.5,
+)
+```
+
+![Stippled difference map](../assets/guide/maps-stipple.png)
+
+## Working offline
+
+Cartopy downloads its Natural Earth coastlines on first use, which fails without internet
+(compute nodes). nicefigs bundles the 110m and 50m coastline, land, ocean and land-border
+shapefiles and points cartopy at them whenever a map is drawn. Data cartopy already finds
+through `cartopy.config` or `CARTOPY_DATA_DIR` is used first; the bundled data is only the
+fallback before a download. For the 10m resolution, cache everything once on a machine with
+internet access:
+
+```bash
+python -m nicefigs.naturalearth /path/to/natural_earth      # or nicefigs.cache_natural_earth(path)
+export NICEFIGS_NATURAL_EARTH_DIR=/path/to/natural_earth    # on the offline machine
+```
+
+`NICEFIGS_NATURAL_EARTH_DIR` is searched after cartopy's own directories and before the
+bundled data, and is the default target of
+[`cache_natural_earth()`][nicefigs.cache_natural_earth]. The Natural Earth data is in the
+public domain.
+
 ## Ternary maps
 
 For a three-part composition per point, such as land-use fractions,

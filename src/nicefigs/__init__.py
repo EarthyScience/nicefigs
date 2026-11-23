@@ -57,6 +57,7 @@ from .maps import (
     scatter_map,
     tri_map,
 )
+from .naturalearth import cache_natural_earth
 from .palettes import (
     CATEGORICAL,
     CUSTOM_CMAPS,
@@ -281,6 +282,7 @@ __all__ = [
     "cross_section",
     "cross_section_panels",
     "profile",
+    "cache_natural_earth",
     "hatch_region",
     "taylor",
     "hovmoller",
