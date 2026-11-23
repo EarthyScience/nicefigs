@@ -490,3 +490,15 @@ from the active theme and the `NICE_COLORS`.
 ```python
 --8<-- "examples/35_schematic.py"
 ```
+
+### 36 — Difference map with significance stippling {#stippled-difference-map}
+
+[`hatch_region`][nicefigs.hatch_region] with `style="dots"` stipples the cells where a
+difference is significant: dots only, no hatch outline, so the diverging colours underneath
+stay readable.
+
+![Stippled difference map](gallery/36_stippled_difference_map.png)
+
+```python
+--8<-- "examples/36_stippled_difference_map.py"
+```
