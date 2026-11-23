@@ -59,22 +59,51 @@ def wrap_heading(label: str, size: float, width_pt: float) -> str:
     return "\n".join(lines)
 
 
+def fit_headings(
+    labels: Sequence[str],
+    lefts: np.ndarray,
+    cell_pt: float,
+    size: float,
+    floor: float,
+    clearance_pt: float = 2.0,
+) -> tuple[float, list[str]]:
+    """The largest heading size, from ``size`` down to ``floor``, at which neighbouring headings clear.
+
+    Each label is wrapped to its cell first; a word wider than the cell cannot wrap, so the size
+    shrinks in 0.1 pt steps until every pair of neighbouring headings is ``clearance_pt`` apart.
+
+    Returns:
+        The size in points and the wrapped headings at that size (at ``floor`` if none clears).
+    """
+    steps = max(int(round((size - floor) / 0.1)), 0)
+    for k in range(steps + 1):
+        f = size - 0.1 * k
+        heads = [wrap_heading(h, f, cell_pt * 1.04) for h in labels]
+        half = [0.5 * max(text_width_pt(line, f) for line in h.split("\n")) for h in heads]
+        pitch = np.diff(np.asarray(lefts, dtype=float)) * cell_pt
+        if all(p - half[j] - half[j + 1] >= clearance_pt for j, p in enumerate(pitch)):
+            return f, heads
+    return floor, heads
+
+
 def header_heights(
-    headings: Sequence[str], unit_lines: int, has_groups: bool, scale: float
+    headings: Sequence[str], unit_lines: int, has_groups: bool, scale: float, head_size: float | None = None
 ) -> dict[str, float]:
     """Vertical positions (pt above the top of the grid) of the stacked header elements.
 
     ``unit_lines`` is the most lines any column's unit spans (0 without units), so a unit with a
-    second line, such as an uncertainty, keeps clear of the heading above it.
+    second line, such as an uncertainty, keeps clear of the heading above it. ``head_size`` is the
+    heading size in points (default ``FS_HEAD * scale``).
 
     Returns:
         ``units`` and ``heading`` (bottoms of those texts), ``rule`` and ``group`` (the group rule
         and the bottom of the group titles) and ``top`` (upper edge of the whole header).
     """
     n_lines = max((h.count("\n") + 1 for h in headings), default=1)
+    head_size = FS_HEAD * scale if head_size is None else head_size
     units = 3.0 * scale
     heading = units + (unit_lines * FS_UNIT * _LINE * scale + 1.0 * scale if unit_lines else 0.0)
-    top = heading + n_lines * FS_HEAD * _LINE * 0.95 * scale + 1.0 * scale
+    top = heading + n_lines * head_size * _LINE * 0.95 + 1.0 * scale
     rule = group = top
     if has_groups:
         rule = top + 3.0 * scale
@@ -94,8 +123,10 @@ def draw_header(
     group_rule: bool,
     cell_pt: float,
     scale: float,
+    head_size: float | None = None,
 ) -> None:
-    """Draw column headings, units, group titles and group rules above the grid."""
+    """Draw column headings (at ``head_size`` pt, default ``FS_HEAD * scale``), units, group titles and rules."""
+    head_size = FS_HEAD * scale if head_size is None else head_size
     for x, head, unit in zip(lefts, headings, units):
         if unit:
             ax.annotate(
@@ -116,7 +147,7 @@ def draw_header(
             textcoords="offset points",
             ha="center",
             va="bottom",
-            fontsize=FS_HEAD * scale,
+            fontsize=head_size,
             color=INK,
             linespacing=0.95,
             annotation_clip=False,

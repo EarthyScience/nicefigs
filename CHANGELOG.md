@@ -57,6 +57,8 @@ to [Semantic Versioning](https://semver.org/).
 - **Behaviour change**: column headings are horizontal and wrapped, units are a grey second line,
   group titles are regular weight above a 1.6 pt rule, row and column labels are text rather than
   ticks, and the colourbar is half the grid width with ticks at the band edges and pointed ends.
+- `scorecard` headings shrink from 7 pt towards the unit size (6 pt) until neighbouring headings stand
+  2 pt apart, so a word wider than a narrow cell no longer runs into the next heading.
 - `outline_boxes` draws unfilled rectangles (`fill=False`).
 
 ### Fixed

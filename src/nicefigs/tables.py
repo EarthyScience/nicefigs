@@ -14,13 +14,14 @@ from ._scorecard import (
     FS_CBAR_TICK,
     FS_HEAD,
     FS_ROW,
+    FS_UNIT,
     FS_VALUE,
     NA_TEXT,
     draw_colorbar,
     draw_header,
+    fit_headings,
     header_heights,
     text_width_pt,
-    wrap_heading,
 )
 from .figure import figure_size
 from .palettes import cmap as resolve_cmap
@@ -226,7 +227,8 @@ def scorecard(
             ``text`` is given. ``nan`` prints ``na_text`` on a grey cell.
         row_labels: Row (model) names.
         col_labels: Column (metric) names; wrapped at spaces to the cell width, or at your
-            own ``"\\n"``.
+            own ``"\\n"``. Headings shrink from 7 pt towards the unit size until neighbours stand
+            2 pt apart.
         ax: Axes to draw on; a new figure sized from the cells is created if ``None``.
         direction: ``{col_label: direction}`` with values from
             :data:`~nicefigs.units.DIRECTIONS`; unlisted columns are ``"higher_better"``.
@@ -411,22 +413,22 @@ def scorecard(
             cbar_w = 2.7
 
         def _plan(cell: float):
-            heads = [wrap_heading(h, FS_HEAD * s, cell * 72.0 * 1.04) for h in heads_raw]
-            hh = header_heights(heads, unit_lines, col_groups is not None, s)
+            fh, heads = fit_headings(heads_raw, lefts, cell * 72.0, FS_HEAD * s, FS_UNIT * s)
+            hh = header_heights(heads, unit_lines, col_groups is not None, s, fh)
             top_in = (hh["top"] + 4.0 * s) / 72.0 + (th.fs_title * 1.6 / 72.0 if title else 0.0)
             grid_w, grid_h = total_w * cell, total_h * cell
             extra = max(0.0, 0.5 * (cbar_w - grid_w)) + 0.06
             l_in, r_in = max(left_in, extra), max(right_in, extra)
             bottom_in = (0.22 + 0.11 + (FS_CBAR_TICK + FS_CBAR) * s * 1.4 / 72.0 + 0.1) if colorbar else 0.08
-            return heads, hh, grid_w, grid_h, l_in, r_in, top_in, bottom_in
+            return fh, heads, hh, grid_w, grid_h, l_in, r_in, top_in, bottom_in
 
         if width is not None:
             w_in = figure_size(width)[0]
             cell_for_wrap = _DEFAULT_CELL_IN
             for _ in range(3):  # wrapping depends on the cell, the margins on the wrapping
-                _, _, _, _, l_in, r_in, _, _ = _plan(cell_for_wrap)
+                _, _, _, _, _, l_in, r_in, _, _ = _plan(cell_for_wrap)
                 cell_for_wrap = max((w_in - l_in - r_in) / total_w, 0.05)
-        heads, hh, grid_w, grid_h, l_in, r_in, top_in, bottom_in = _plan(cell_for_wrap)
+        fh, heads, hh, grid_w, grid_h, l_in, r_in, top_in, bottom_in = _plan(cell_for_wrap)
         fig_w, fig_h = l_in + grid_w + r_in, top_in + grid_h + bottom_in
         fig = figure(width=fig_w, height=fig_h)
         ax = fig.add_axes([l_in / fig_w, bottom_in / fig_h, grid_w / fig_w, grid_h / fig_h])
@@ -437,8 +439,8 @@ def scorecard(
         fig = ax.figure
         box = ax.get_position()
         cell_pt = max(fig.get_figwidth() * box.width * 72.0 / total_w, 1.0)
-        heads = [wrap_heading(h, FS_HEAD * s, cell_pt * 1.04) for h in heads_raw]
-        hh = header_heights(heads, unit_lines, col_groups is not None, s)
+        fh, heads = fit_headings(heads_raw, lefts, cell_pt, FS_HEAD * s, FS_UNIT * s)
+        hh = header_heights(heads, unit_lines, col_groups is not None, s, fh)
 
     ax.set_xlim(0, total_w)
     ax.set_ylim(total_h, 0)
@@ -525,7 +527,9 @@ def scorecard(
             annotation_clip=False,
         )
 
-    draw_header(ax, lefts, heads, units, col_groups, hh, group_rule=group_rule, cell_pt=cell_pt, scale=s)
+    draw_header(
+        ax, lefts, heads, units, col_groups, hh, group_rule=group_rule, cell_pt=cell_pt, scale=s, head_size=fh
+    )
 
     if title:
         ax.set_title(title, fontsize=th.fs_title, pad=hh["top"] + 4.0 * s, loc="left")
