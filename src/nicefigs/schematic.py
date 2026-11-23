@@ -4,7 +4,8 @@ A concept figure (a pipeline, a data layout, a tree of merges) is built at its p
 7 pt label is 7 pt on the page. :func:`schematic_axes` makes the canvas, with the x and y data
 coordinates in inches; :func:`~nicefigs.diagram_box` and :func:`~nicefigs.diagram_arrow` draw
 boxes and connectors on it, and this module adds the remaining pieces: :func:`numbered_disc`,
-:func:`group_band`, :func:`label_pair`, :func:`grid_cells`, :func:`folder_icon`, and the colour
+:func:`group_band`, :func:`label_pair`, :func:`grid_cells`, :func:`folder_icon`,
+:func:`cylinder_icon`, :func:`chip_icon`, and the colour
 helpers :func:`tint` and :func:`shade`. Every colour defaults to the active theme and the
 :data:`~nicefigs.NICE_COLORS`: ink is the theme's text colour, secondary text the neutral grey,
 the accent the orange of the house palette.
@@ -40,6 +41,8 @@ if TYPE_CHECKING:
     from matplotlib.text import Text
 
 __all__ = [
+    "chip_icon",
+    "cylinder_icon",
     "folder_icon",
     "grid_cells",
     "group_band",
@@ -358,3 +361,111 @@ def folder_icon(
     )
     ax.add_patch(icon)
     return icon
+
+
+def cylinder_icon(
+    ax: Axes,
+    xy: tuple[float, float],
+    width: float,
+    height: float,
+    *,
+    facecolor: Any = None,
+    edgecolor: Any = None,
+    linewidth: float = 0.6,
+    zorder: float = 3.0,
+) -> tuple[Polygon, Polygon]:
+    """Draw a cylinder icon, to stand for a data store or database.
+
+    Args:
+        ax: Axes to draw on.
+        xy: Lower-left corner of the icon's bounding box, in data coordinates.
+        width: Icon width, in data units.
+        height: Icon height, in data units, rim included.
+        facecolor: Fill colour; a light tint of the theme's text colour by default.
+        edgecolor: Outline colour; the theme's text colour by default.
+        linewidth: Outline width (pt).
+        zorder: Drawing order; the top rim draws just above the body.
+
+    Returns:
+        The body and the top rim patches.
+    """
+    th = get_theme()
+    face = tint(th.text_color, 0.12) if facecolor is None else facecolor
+    edge = th.text_color if edgecolor is None else edgecolor
+    x, y = xy
+    a, b = width / 2, min(0.14 * width, 0.2 * height)
+    cx = x + a
+    t = np.linspace(0.0, np.pi, 41)
+    lower = np.column_stack([cx - a * np.cos(t), y + b - b * np.sin(t)])
+    upper = np.column_stack([cx + a * np.cos(t), y + height - b + b * np.sin(t)])
+    body = Polygon(
+        np.vstack([lower, upper]),
+        closed=True,
+        facecolor=face,
+        edgecolor=edge,
+        linewidth=linewidth,
+        zorder=zorder,
+    )
+    s = np.linspace(0.0, 2 * np.pi, 81)
+    rim = Polygon(
+        np.column_stack([cx + a * np.cos(s), y + height - b + b * np.sin(s)]),
+        closed=True,
+        facecolor=face,
+        edgecolor=edge,
+        linewidth=linewidth,
+        zorder=zorder + 0.01,
+    )
+    ax.add_patch(body)
+    ax.add_patch(rim)
+    return body, rim
+
+
+def chip_icon(
+    ax: Axes,
+    center: tuple[float, float],
+    size: float,
+    *,
+    pins: int = 3,
+    facecolor: Any = None,
+    edgecolor: Any = None,
+    linewidth: float = 0.6,
+    zorder: float = 3.0,
+) -> Polygon:
+    """Draw a processor chip icon, a square die with pins on every side, to stand for a CPU or GPU.
+
+    Args:
+        ax: Axes to draw on.
+        center: Centre, in data coordinates.
+        size: Side of the icon with its pins, in data units; the die is 70 % of it.
+        pins: Pins per side.
+        facecolor: Fill colour of the die; a light tint of the theme's text colour by default.
+        edgecolor: Outline and pin colour; the theme's text colour by default.
+        linewidth: Outline and pin width (pt).
+        zorder: Drawing order.
+
+    Returns:
+        The die patch.
+    """
+    th = get_theme()
+    edge = th.text_color if edgecolor is None else edgecolor
+    cx, cy = center
+    h, d = size / 2, 0.35 * size
+    die = Polygon(
+        [(cx - d, cy - d), (cx + d, cy - d), (cx + d, cy + d), (cx - d, cy + d)],
+        closed=True,
+        facecolor=tint(th.text_color, 0.12) if facecolor is None else facecolor,
+        edgecolor=edge,
+        linewidth=linewidth,
+        zorder=zorder,
+    )
+    ax.add_patch(die)
+    for k in range(pins):
+        u = -d + (k + 1) * 2 * d / (pins + 1)
+        for xs, ys in (
+            ((cx + u, cx + u), (cy + d, cy + h)),
+            ((cx + u, cx + u), (cy - d, cy - h)),
+            ((cx - d, cx - h), (cy + u, cy + u)),
+            ((cx + d, cx + h), (cy + u, cy + u)),
+        ):
+            ax.plot(xs, ys, color=edge, linewidth=linewidth, solid_capstyle="butt", zorder=zorder - 0.01)
+    return die
