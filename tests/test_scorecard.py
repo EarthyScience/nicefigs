@@ -289,6 +289,15 @@ def test_text_overlaps_are_clean_for_a_grouped_card_with_colourbar():
     assert nf.check_text_overlaps(ax.figure) == []
 
 
+def test_a_unit_on_two_lines_keeps_clear_of_its_heading():
+    ax = _card(
+        [[1.0, 2.0], [0.9, 2.2]],
+        reference_row="ref",
+        col_units={"c0": "ppm\n±0.100", "c1": "ppm"},
+    )
+    assert nf.check_text_overlaps(ax.figure) == []
+
+
 def test_the_baseline_example_renders_without_text_problems_and_has_the_deck_look():
     path = Path(__file__).parent.parent / "examples" / "34_scorecard_baseline.py"
     spec = importlib.util.spec_from_file_location("ex34", path)

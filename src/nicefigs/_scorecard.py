@@ -60,9 +60,12 @@ def wrap_heading(label: str, size: float, width_pt: float) -> str:
 
 
 def header_heights(
-    headings: Sequence[str], has_units: bool, has_groups: bool, scale: float
+    headings: Sequence[str], unit_lines: int, has_groups: bool, scale: float
 ) -> dict[str, float]:
     """Vertical positions (pt above the top of the grid) of the stacked header elements.
+
+    ``unit_lines`` is the most lines any column's unit spans (0 without units), so a unit with a
+    second line, such as an uncertainty, keeps clear of the heading above it.
 
     Returns:
         ``units`` and ``heading`` (bottoms of those texts), ``rule`` and ``group`` (the group rule
@@ -70,7 +73,7 @@ def header_heights(
     """
     n_lines = max((h.count("\n") + 1 for h in headings), default=1)
     units = 3.0 * scale
-    heading = units + (FS_UNIT * _LINE * scale + 1.0 * scale if has_units else 0.0)
+    heading = units + (unit_lines * FS_UNIT * _LINE * scale + 1.0 * scale if unit_lines else 0.0)
     top = heading + n_lines * FS_HEAD * _LINE * 0.95 * scale + 1.0 * scale
     rule = group = top
     if has_groups:
