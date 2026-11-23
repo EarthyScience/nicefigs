@@ -19,6 +19,7 @@ to [Semantic Versioning](https://semver.org/).
   `folder_icon` and the colour helpers `tint`, `shade` and `soft_color`. They draw with the active
   theme and the `NICE_COLORS` of the house palette, and combine with `diagram_box` and
   `diagram_arrow`. `NICE_COLORS` is now exported at the top level.
+- `cylinder_icon` (a data store) and `chip_icon` (a processor) join `folder_icon` in `nicefigs.schematic`.
 - `save(..., check_text=True)` runs `check_text_overlaps` first and raises `ValueError` on a problem.
 - Gallery example `35_schematic`.
 - The font chain reaches metric-compatible Helvetica clones (TeX Gyre Heros, Nimbus Sans, Liberation Sans) before DejaVu Sans.

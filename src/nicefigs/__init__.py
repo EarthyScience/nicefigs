@@ -96,6 +96,8 @@ from .pareto import frontier, pareto
 from .ranking import caterpillar
 from .scatter import scatter
 from .schematic import (
+    chip_icon,
+    cylinder_icon,
     folder_icon,
     grid_cells,
     group_band,
@@ -268,6 +270,8 @@ __all__ = [
     "group_band",
     "label_pair",
     "grid_cells",
+    "chip_icon",
+    "cylinder_icon",
     "folder_icon",
     "tint",
     "shade",

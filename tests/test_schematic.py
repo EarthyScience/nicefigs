@@ -77,6 +77,27 @@ def test_folder_icon_stays_inside_its_box():
     assert pts[:, 1].max() == pytest.approx(0.6)
 
 
+def test_cylinder_icon_stays_inside_its_box_and_shows_its_rim():
+    fig, ax = nf.schematic_axes(1.0, 1.0)
+    body, rim = nf.cylinder_icon(ax, (0.2, 0.3), 0.4, 0.5)
+    pts = np.vstack([np.asarray(body.get_xy()), np.asarray(rim.get_xy())])
+    assert pts[:, 0].min() == pytest.approx(0.2, abs=1e-9)
+    assert pts[:, 0].max() == pytest.approx(0.6, abs=1e-9)
+    assert pts[:, 1].min() == pytest.approx(0.3, abs=1e-9)
+    assert pts[:, 1].max() == pytest.approx(0.8, abs=1e-9)
+    assert rim.zorder > body.zorder
+
+
+def test_chip_icon_is_a_square_with_pins_on_every_side():
+    fig, ax = nf.schematic_axes(1.0, 1.0)
+    die = nf.chip_icon(ax, (0.5, 0.5), 0.4, pins=3)
+    pts = np.asarray(die.get_xy())
+    assert pts[:, 0].max() - pts[:, 0].min() == pytest.approx(0.4 * 0.7)
+    assert len(ax.lines) == 12
+    xs = np.concatenate([line.get_xdata() for line in ax.lines])
+    assert xs.min() == pytest.approx(0.3) and xs.max() == pytest.approx(0.7)
+
+
 def test_save_with_check_text_refuses_overlapping_text(tmp_path):
     fig, ax = nf.schematic_axes(2.0, 1.0)
     ax.text(1.0, 0.5, "first label")
