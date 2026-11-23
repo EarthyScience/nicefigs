@@ -289,6 +289,19 @@ def test_text_overlaps_are_clean_for_a_grouped_card_with_colourbar():
     assert nf.check_text_overlaps(ax.figure) == []
 
 
+def test_unbreakable_headings_shrink_until_neighbours_clear_and_roomy_ones_keep_7pt():
+    labels = ["OCO-2", "OCO-3", "TCCON"]
+    narrow = nf.scorecard(np.ones((1, 3)), row_labels=["a"], col_labels=labels, cell_in=0.31)
+    wide = nf.scorecard(np.ones((1, 3)), row_labels=["a"], col_labels=labels, cell_in=0.6)
+    heads = [t for t in narrow.texts if t.get_text() in labels]
+    assert all(6.0 <= t.get_fontsize() < 7.0 for t in heads)
+    assert {t.get_fontsize() for t in wide.texts if t.get_text() in labels} == {7.0}
+    narrow.figure.canvas.draw()
+    boxes = sorted((t.get_window_extent() for t in heads), key=lambda b: b.x0)
+    dpi = narrow.figure.dpi
+    assert all((b.x0 - a.x1) * 72.0 / dpi >= 1.5 for a, b in zip(boxes, boxes[1:]))
+
+
 def test_a_unit_on_two_lines_keeps_clear_of_its_heading():
     ax = _card(
         [[1.0, 2.0], [0.9, 2.2]],
