@@ -36,6 +36,10 @@ and the [Gallery](gallery.md) for runnable examples.
 
 ::: nicefigs.maps
 
+## `nicefigs.naturalearth`
+
+::: nicefigs.naturalearth
+
 ## `nicefigs.images`
 
 ::: nicefigs.images

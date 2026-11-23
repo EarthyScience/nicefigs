@@ -292,7 +292,7 @@ export NICEFIGS_NATURAL_EARTH_DIR=/path/to/natural_earth    # on the offline mac
 
 `NICEFIGS_NATURAL_EARTH_DIR` is searched after cartopy's own directories and before the
 bundled data, and is the default target of
-[`cache_natural_earth()`][nicefigs.cache_natural_earth]. The Natural Earth data is in the
+[`cache_natural_earth()`][nicefigs.naturalearth.cache_natural_earth]. The Natural Earth data is in the
 public domain.
 
 ## Ternary maps
